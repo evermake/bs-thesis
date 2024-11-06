@@ -1,0 +1,3 @@
+[submodule "free-foil-hm"]
+	path = free-foil-hm
+	url = git@github.com:evermake/free-foil-hm.git
