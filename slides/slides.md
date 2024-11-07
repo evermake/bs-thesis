@@ -1,6 +1,11 @@
 ---
 theme: seriph
 background: false
+export:
+  format: pdf
+  dark: false
+  withClicks: true
+  withToc: false
 ---
 
 <h1 class="text-4xl!">
@@ -15,6 +20,8 @@ Vladislav Deryabkin, Track — BS21, Supervisor — Nikolai Kudasov
 
 
 ---
+clicks: 1
+---
 
 # Context
 
@@ -24,15 +31,14 @@ Type system — is a crucial component for any modern programming language:
 
 - Errors are detected earlier.
 - Types serve as a documentation.
+- Types can help a compiler to optimize the code.
 - IDE hints help developers.
 
 <br/>
 
 Most popular programming languages did not have types<v-click>, but they do now:</v-click>
 
-<div class="grid grid-cols-2 gap-4">
-
-````md magic-move {at:'1'}
+<div v-click.hide="[1]" class="grid grid-cols-2 gap-4">
 ```python
 # Python
 def fib(n):
@@ -43,19 +49,7 @@ def fib(n):
 ㅤ
 ㅤ
 ```
-```python
-# Python with MyPy
-def fib(n: int) -> Iterator[int]:
-    a, b = 0, 1
-    while a < n:
-        yield a
-        a, b = b, a+b
-ㅤ
-ㅤ
-```
-````
 
-````md magic-move {at:'1'}
 ```javascript
 // JavaScript
 function fib(n) {
@@ -66,6 +60,20 @@ function fib(n) {
   }
 }
 ```
+</div>
+
+<div v-click="1" class="grid grid-cols-2 gap-4">
+```python
+# Python with MyPy
+def fib(n: int) -> Iterator[int]:
+    a, b = 0, 1
+    while a < n:
+        yield a
+        a, b = b, a+b
+ㅤ
+ㅤ
+```
+
 ```typescript
 // TypeScript
 function fib(n: number): Generator<number> {
@@ -76,9 +84,13 @@ function fib(n: number): Generator<number> {
   }
 }
 ```
-````
-
 </div>
+
+<style>
+.slidev-vclick-hidden {
+  display: none;
+}
+</style>
 
 ---
 
@@ -86,19 +98,21 @@ function fib(n: number): Generator<number> {
 
 <span/>
 
-Implementing a type system for a programming language is **hard**.
+Implementing a type system for a programming language is crucial<v-click>, but it is **hard**.</v-click>
 
-<hr/>
+<hr class="my-4"/>
 
-Some popular strongly-typed languages and theory their typecheckers based on:
+<v-click>
+Some popular strongly-typed languages and theory their typecheckers based on (extended or modified):
 
-- Rust: <span class="text-gray" v-mark.underline.orange="1">Hindley-Milner Type Inference</span>
+- Rust: <span class="text-gray" v-mark.underline.orange="3">Hindley-Milner Type Inference</span>
 - TypeScript: <span class="text-gray">Structural Typing</span>
-- Haskell: <span class="text-gray" v-mark.underline.orange="1">Hindley-Milner Type Inference</span>
+- Haskell: <span class="text-gray" v-mark.underline.orange="3">Hindley-Milner Type Inference</span>
 - C++: <span class="text-gray">Nominal Subtyping</span>
 - Java: <span class="text-gray">Nominal Subtyping</span>
 - Swift: <span class="text-gray">Nominal Subtyping</span>
-- Scala: <span class="text-gray" v-mark.underline.orange="1">Hindley-Milner Type Inference</span>
+- OCaml: <span class="text-gray" v-mark.underline.orange="3">Hindley-Milner Type Inference</span>
+</v-click>
 
 ---
 
@@ -127,8 +141,31 @@ typecheck ast = TypecheckingAlgorithm.typecheck customRules ast
 
 # Related Works
 
-- Free Foil — ...
-- ...
+## Free Foil
+
+My project heavily based on the work by Kudasov, _et al._ "Free Foil: Generating Efficient and Scope-Safe Abstract Syntax".
+
+The idea and implementation of the Second-Order Abstract Syntax is borrowed from here.
+
+---
+
+# Related Works
+
+## Lamdu
+
+[github.com/lamdu/lamdu](https://github.com/lamdu/lamdu)
+
+Project aiming to create live programming environment.
+
+![image](/lamdu.png)
+
+---
+
+# Related Works
+
+## Other
+
+_Needs more investigation._
 
 ---
 
