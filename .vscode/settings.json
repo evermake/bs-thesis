@@ -1,0 +1,42 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+
+    // Core latex/pdflatex auxiliary files
+    "paper/**/*.aux": true,
+    "paper/**/*.lof": true,
+    "paper/**/*.log": true,
+    "paper/**/*.lot": true,
+    "paper/**/*.fls": true,
+    "paper/**/*.out": true,
+    "paper/**/*.toc": true,
+    "paper/**/*.fmt": true,
+    "paper/**/*.fot": true,
+    "paper/**/*.cb": true,
+    "paper/**/*.cb2": true,
+    "paper/**/.lb": true,
+
+    // ## Bibliography auxiliary files (bibtex/biblatex/biber):
+    "paper/**/*.bbl": true,
+    "paper/**/*.bcf": true,
+    "paper/**/*.blg": true,
+    "paper/**/*-blx.aux": true,
+    "paper/**/*-blx.bib": true,
+    "paper/**/*.run.xml": true,
+
+    // ## Build tool auxiliary files:
+    "paper/**/*.fdb_latexmk": true,
+    "paper/**/*.synctex": true,
+    "paper/**/*.synctex(busy)": true,
+    "paper/**/*.synctex.gz": true,
+    "paper/**/*.synctex.gz(busy)": true,
+    "paper/**/*.pdfsync": true,
+    "paper/**/*.rubbercache": true,
+    "paper/**/rubber.cache": true,
+  }
+}

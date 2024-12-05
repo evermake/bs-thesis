@@ -1,0 +1,24 @@
+\chapter{Literature Review}
+\label{chap:lr}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Identify groups of related work (e.g. variations of an algorithm, implementations, theoretical results, etc.)
+% This section may include papers (published research, pre-prints), existing libraries, software, blog posts, etc.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Typechecking Algorithms}
+
+In 1928 Damas and Milner \cite{DamasMilner1982_TypeSchemes} have shown an implementation of \texttt{let}-generalization — Algorithm~$\mathcal{W}$, which, however, is inefficient as it requires looking through the entire type environment.
+A more efficient algorithm has been discovered by R\'emy~\cite{Remy1992_SortedEqTheoryTypes} and shown to be successfully adopted in the OCaml programming language \cite{Kiselyov2022_OCamplTypeChecker}, although it is not widely-known.
+
+\section{Expression Problem}
+
+In 1998 Wadler formulated an Expression Problem \cite{ExpressionProblem} that involves extending a program with new data types and new operations without modifying existing code or losing type safety.
+
+Sweirstra's proposed a solution with data types à la carte \cite{Swierstra2008_a_la_carte} to the problem, and such approach was adopted in Free Foil.
+
+\section{Similar Works}
+
+\texttt{hypertypes} \cite{hypertypes} is another Haskell library that solves the expression problem and provides a generic implementation of Hindley-Milner type inference based on work of Rémy \cite{Remy1992_SortedEqTheoryTypes}.
+
+Another work by Heeren \textit{et al.} \cite{Heeren2002GeneralizingHindleyMilner} generalized $\mathcal{W}$ and $\mathcal{M}$ Hindley-Milner type inference algorithms. However, the focus of their work is to modify the original (inefficient \cite{Remy1992_SortedEqTheoryTypes}) algorithms in order to improve error messages generation but not to make development of a new typechecker easier.

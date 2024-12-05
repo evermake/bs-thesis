@@ -2,9 +2,9 @@
 
 \usepackage{tempora} % Times New Roman alike font  
 
-\usepackage{vmargin}
-\setpapersize{A4}
-\setmarginsrb{2.5cm}{2.2cm}{2.2cm}{2.2cm}{0pt}{10mm}{0pt}{13mm}
+% Use geometry package as vmargin conflicts with pdfpages.
+\usepackage[a4paper, includeheadfoot, left=2.5cm, right=2.2cm, top=2.2cm, bottom=2.2cm, headsep=10mm, footskip=13mm]{geometry}
+
 \usepackage{setspace}
 \setstretch{1.5}
 \usepackage{indentfirst}
@@ -120,36 +120,24 @@
    \begin{flushleft}\raggedleft #1\end{flushleft}
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
 
-\includepdf[pages=-]{title.pdf}
+% Add title (yes, it' separate).
+\includepdf[fitpaper=true,noautoscale=true]{title.pdf}
+
 \tableofcontents
-\listoftables
-\listoffigures
+% \listoftables
+% \listoffigures
+
 \newpage
 
+\include{chapters/01_abstract}
 
-\include{chapters/abstract}
-\setcounter{page}{7}
-% set manually the number, from which Chapter 1 starts!
-% Why do we put 7 in this case?
-% Title page - page 1
-% Contents - page 2, page 3
-% List of tables - page 4
-% List of figures - page 5
-% Abstract - page 6
-% Chapter 1 - page 7
-% In your thesis the counter number can be different, please count carefully and insert the corresponding number.
+\setcounter{page}{4}
+\include{chapters/02_introduction}
+\include{chapters/03_literature-review}
+\printbibliography[heading=bibintoc,title={References}]
 
-\include{chapters/chapter1}
-\include{chapters/chapter2}
-\include{chapters/chapter3}
-\include{chapters/chapter4}
-\include{chapters/chapter5}
-\include{chapters/chapter6}
-
-
-%% REFERENCES
-\printbibliography[heading=bibintoc,title={Bibliography cited}]
-\include{chapters/appex}
 \end{document}
