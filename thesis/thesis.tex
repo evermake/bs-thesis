@@ -3,8 +3,17 @@
 \usepackage{tempora} % Times New Roman alike font  
 
 % Use geometry package as vmargin conflicts with pdfpages.
-\usepackage[a4paper, includeheadfoot, left=2.5cm, right=2.2cm, top=2.2cm, bottom=2.2cm, headsep=10mm, footskip=13mm]{geometry}
-
+\usepackage[
+  a4paper,
+  includeheadfoot,
+  left=2.5cm,
+  right=2cm,
+  top=2cm,
+  bottom=2cm,
+  headsep=10mm,
+  footskip=13mm
+]{geometry}
+ 
 \usepackage{setspace}
 \setstretch{1.5}
 \usepackage{indentfirst}
@@ -21,7 +30,7 @@
 
 \usepackage[english]{babel}
 \usepackage[backend=biber,style=ieee,autocite=inline]{biblatex}
-\bibliography{ref.bib}
+\bibliography{../ref.bib}
 \DefineBibliographyStrings{english}{%
   bibliography = {References},}
 \usepackage{blindtext}
@@ -138,6 +147,11 @@
 \setcounter{page}{4}
 \include{chapters/02_introduction}
 \include{chapters/03_literature-review}
+\include{chapters/04_methodology}
+\include{chapters/05_implementation}
+\include{chapters/06_evaluation}
+\include{chapters/07_conclusion}
+\include{chapters/08_acknowledgments}
 \printbibliography[heading=bibintoc,title={References}]
 
 \end{document}

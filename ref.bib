@@ -1,3 +1,200 @@
+@article{Hindley1969_PrincipalTypeScheme,
+  issn      = {00029947},
+  url       = {http://www.jstor.org/stable/1995158},
+  author    = {R. Hindley},
+  journal   = {Transactions of the American Mathematical Society},
+  pages     = {29--60},
+  publisher = {American Mathematical Society},
+  title     = {The Principal Type-Scheme of an Object in Combinatory Logic},
+  urldate   = {2024-12-04},
+  volume    = {146},
+  year      = {1969}
+}
+
+@article{Milner1978_TypePolymorphism,
+  title    = {A theory of type polymorphism in programming},
+  journal  = {Journal of Computer and System Sciences},
+  volume   = {17},
+  number   = {3},
+  pages    = {348-375},
+  year     = {1978},
+  issn     = {0022-0000},
+  doi      = {https://doi.org/10.1016/0022-0000(78)90014-4},
+  url      = {https://www.sciencedirect.com/science/article/pii/0022000078900144},
+  author   = {Robin Milner},
+  abstract = {The aim of this work is largely a practical one. A widely employed style of programming, particularly in structure-processing languages which impose no discipline of types, entails defining procedures which work well on objects of a wide variety. We present a formal type discipline for such polymorphic procedures in the context of a simple programming language, and a compile time type-checking algorithm W which enforces the discipline. A Semantic Soundness Theorem (based on a formal semantics for the language) states that well-type programs cannot “go wrong” and a Syntactic Soundness Theorem states that if W accepts a program then it is well typed. We also discuss extending these results to richer languages; a type-checking algorithm based on W is in fact already implemented and working, for the metalanguage ML in the Edinburgh LCF system.}
+}
+
+@inproceedings{DamasMilner1982_TypeSchemes,
+  author    = {Damas, Luis and Milner, Robin},
+  title     = {Principal type-schemes for functional programs},
+  year      = {1982},
+  isbn      = {0897910656},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/582153.582176},
+  doi       = {10.1145/582153.582176},
+  booktitle = {Proceedings of the 9th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages     = {207–212},
+  numpages  = {6},
+  location  = {Albuquerque, New Mexico},
+  series    = {POPL '82}
+}
+
+@techreport{Remy1992_SortedEqTheoryTypes,
+  title       = {{Extension of ML type system with a sorted equation theory on types}},
+  author      = {R{\'e}my, Didier},
+  url         = {https://inria.hal.science/inria-00077006},
+  note        = {Projet FORMEL},
+  type        = {Research Report},
+  number      = {RR-1766},
+  institution = {{INRIA}},
+  year        = {1992},
+  pdf         = {https://inria.hal.science/inria-00077006v1/file/RR-1766.pdf},
+  hal_id      = {inria-00077006},
+  hal_version = {v1}
+}
+
+@misc{Kiselyov2022_OCamplTypeChecker,
+  author = {Oleg Kiselyov},
+  title  = {How OCaml type checker works -- or what polymorphism and garbage collection have in common},
+  url    = {https://okmij.org/ftp/ML/generalization.html},
+  year   = {2022},
+  month  = {01},
+  day    = {9}
+}
+
+@inproceedings{Mairson1989_MLTypabilityExponential,
+  author = {Mairson, Harry G.},
+  title = {Deciding ML typability is complete for deterministic exponential time},
+  year = {1989},
+  isbn = {0897913434},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/96709.96748},
+  doi = {10.1145/96709.96748},
+  booktitle = {Proceedings of the 17th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages = {382–401},
+  numpages = {20},
+  location = {San Francisco, California, USA},
+  series = {POPL '90}
+}
+
+@article{Simon2002_SecretsGHC,
+  author = {Peyton Jones, Simon and Marlow, Simon},
+  title = {Secrets of the Glasgow Haskell Compiler inliner},
+  year = {2002},
+  month = {July},
+  abstract = {Higher-order languages, such as Haskell, encourage the programmer to build abstractions by composing functions. A good compiler must inline many of these calls to recover an efficiently executable program.
+
+  In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat.
+
+  The purpose of this paper is, therefore, to articulate the key lessons we learned from a full-scale ``production'' inliner, the one used in the Glasgow Haskell compiler. We focus mainly on the algorithmic aspects, but we also provide some indicative measurements to substantiate the importance of various aspects of the inliner.
+
+  The "Related File" link above is an earlier tech-report version of the paper, but the JFP version is the one to read (the "View publication" button).},
+  url = {https://www.microsoft.com/en-us/research/publication/secrets-of-the-glasgow-haskell-compiler-inliner/},
+  pages = {393-434},
+  journal = {Journal of Functional Programming},
+  volume = {12},
+}
+
+@misc{Foil,
+  title={The Foil: Capture-Avoiding Substitution With No Sharp Edges}, 
+  author={Dougal Maclaurin and Alexey Radul and Adam Paszke},
+  year={2022},
+  eprint={2210.04729},
+  archivePrefix={arXiv},
+  primaryClass={cs.PL},
+  url={https://arxiv.org/abs/2210.04729}, 
+}
+
+@inproceedings{FreeFoil,
+  author    = {Kudasov, Nikolai and Shakirova, Renata and Shalagin, Egor and Tyulebaeva, Karina},
+  booktitle = {2024 4th International Conference on Code Quality (ICCQ)},
+  title     = {Free Foil: Generating Efficient and Scope-Safe Abstract Syntax},
+  year      = {2024},
+  volume    = {},
+  number    = {},
+  pages     = {1-16},
+  keywords  = {Codes;Prototypes;Syntactics;Benchmark testing;Generators;Encoding;Safety;abstract syntax;second-order;capture-avoiding substitution;free monads},
+  doi       = {10.1109/ICCQ60895.2024.10576867}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@book{TaPL,
+  title     = {Types and programming languages},
+  author    = {Pierce, Benjamin C},
+  year      = {2002},
+  publisher = {MIT press}
+}
+
+@inproceedings{BNFC,
+  author    = {Forsberg, Markus and Ranta, Aarne},
+  title     = {BNF converter},
+  year      = {2004},
+  isbn      = {1581138504},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/1017472.1017475},
+  doi       = {10.1145/1017472.1017475},
+  abstract  = {We will demonstrate BNFC (the BNF Converter) [7, 6], a multi-lingual compiler tool. BNFC takes as its input a grammar written in LBNF (Labelled BNF) notation, and generates a compiler front-end (an abstract syntax, a lexer, and a parser). Furthermore, it generates a case skeleton usable as the starting point of back-end construction, a pretty printer, a test bench, and a LaTeX document usable as language specification. The program components can be generated in Haskell, Java, C and C++ and their standard parser and lexer tools. BNFC itself was written in Haskell.The methodology used for the generated front-end is based on Appel's books on compiler construction [3, 1, 2]. BNFC has been used as a teaching tool in compiler construction courses at Chalmers. It has also been applied to research-related programming language development, and in an industrial application producing a compiler for a telecommunications protocol description language [4].BNFC is freely available under the GPL license at its website and in the testing distribution of Debian Linux.},
+  booktitle = {Proceedings of the 2004 ACM SIGPLAN Workshop on Haskell},
+  pages     = {94–95},
+  numpages  = {2},
+  keywords  = {pretty printer, parser generator, grammar, document automation, compiler construction, abstract syntax, BNF},
+  location  = {Snowbird, Utah, USA},
+  series    = {Haskell '04}
+}
+
+@article{Swierstra2008_a_la_carte,
+  title     = {Data types \`a la carte},
+  volume    = {18},
+  doi       = {10.1017/S0956796808006758},
+  number    = {4},
+  journal   = {Journal of Functional Programming},
+  publisher = {Cambridge University Press},
+  author    = {Swierstra, Wouter},
+  year      = {2008},
+  pages     = {423–436}
+}
+
+@misc{ExpressionProblem,
+  author = {Philip Wadler},
+  title  = {The Expression Problem},
+  url    = {https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt},
+  year   = {1998},
+  month  = {11},
+  day    = {12},
+  note   = {Accessed: 2024-11-07}
+}
+
 @article{VytiniotisJonesSchrijversSulzmann2011,
   title   = {OutsideIn(X) Modular type inference with local assumptions},
   volume  = {21},
@@ -7,13 +204,6 @@
   author  = {Vytiniotis, Dimitrios and Peyton Jones, Simon and Schrijvers, Tom and Silzmann, Martin},
   year    = {2011},
   pages   = {333–412}
-}
-
-@book{TaPL,
-  title     = {Types and programming languages},
-  author    = {Pierce, Benjamin C},
-  year      = {2002},
-  publisher = {MIT press}
 }
 
 @article{Coquand1996,
@@ -56,79 +246,6 @@
   pages      = {1–44},
   numpages   = {44},
   keywords   = {polymorphism, subtyping, type inference}
-}
-
-@techreport{Remy1992_SortedEqTheoryTypes,
-  title       = {{Extension of ML type system with a sorted equation theory on types}},
-  author      = {R{\'e}my, Didier},
-  url         = {https://inria.hal.science/inria-00077006},
-  note        = {Projet FORMEL},
-  type        = {Research Report},
-  number      = {RR-1766},
-  institution = {{INRIA}},
-  year        = {1992},
-  pdf         = {https://inria.hal.science/inria-00077006v1/file/RR-1766.pdf},
-  hal_id      = {inria-00077006},
-  hal_version = {v1}
-}
-
-@article{10.1145/582153.582176,
-  author    = {Damas, Luis and Milner, Robin},
-  title     = {Principal type-schemes for functional programs},
-  year      = {1982},
-  isbn      = {0897910656},
-  publisher = {Association for Computing Machinery},
-  address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/582153.582176},
-  doi       = {10.1145/582153.582176},
-  booktitle = {Proceedings of the 9th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
-  pages     = {207–212},
-  numpages  = {6},
-  location  = {Albuquerque, New Mexico},
-  series    = {POPL '82}
-}
-
-@article{Hindley1969PrincipalTypeScheme,
-  issn      = {00029947},
-  url       = {http://www.jstor.org/stable/1995158},
-  author    = {R. Hindley},
-  journal   = {Transactions of the American Mathematical Society},
-  pages     = {29--60},
-  publisher = {American Mathematical Society},
-  title     = {The Principal Type-Scheme of an Object in Combinatory Logic},
-  urldate   = {2024-12-04},
-  volume    = {146},
-  year      = {1969}
-}
-
-@article{Milner1978_TypePolymorphism,
-  title    = {A theory of type polymorphism in programming},
-  journal  = {Journal of Computer and System Sciences},
-  volume   = {17},
-  number   = {3},
-  pages    = {348-375},
-  year     = {1978},
-  issn     = {0022-0000},
-  doi      = {https://doi.org/10.1016/0022-0000(78)90014-4},
-  url      = {https://www.sciencedirect.com/science/article/pii/0022000078900144},
-  author   = {Robin Milner},
-  abstract = {The aim of this work is largely a practical one. A widely employed style of programming, particularly in structure-processing languages which impose no discipline of types, entails defining procedures which work well on objects of a wide variety. We present a formal type discipline for such polymorphic procedures in the context of a simple programming language, and a compile time type-checking algorithm W which enforces the discipline. A Semantic Soundness Theorem (based on a formal semantics for the language) states that well-type programs cannot “go wrong” and a Syntactic Soundness Theorem states that if W accepts a program then it is well typed. We also discuss extending these results to richer languages; a type-checking algorithm based on W is in fact already implemented and working, for the metalanguage ML in the Edinburgh LCF system.}
-}
-
-@inproceedings{DamasMilner1982_TypeSchemes,
-  author    = {Damas, Luis and Milner, Robin},
-  title     = {Principal type-schemes for functional programs},
-  year      = {1982},
-  isbn      = {0897910656},
-  publisher = {Association for Computing Machinery},
-  address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/582153.582176},
-  doi       = {10.1145/582153.582176},
-  booktitle = {Proceedings of the 9th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
-  pages     = {207–212},
-  numpages  = {6},
-  location  = {Albuquerque, New Mexico},
-  series    = {POPL '82}
 }
 
 @article{OderskySulzmannWehr1999,
@@ -435,16 +552,6 @@
   note   = {Accessed: 2024-11-07}
 }
 
-@misc{Kiselyov2022_OCamplTypeChecker,
-  author = {Oleg Kiselyov},
-  title  = {How OCaml type checker works -- or what polymorphism and garbage collection have in common},
-  url    = {https://okmij.org/ftp/ML/generalization.html},
-  year   = {2022},
-  month  = {01},
-  day    = {9},
-  note   = {Accessed: 2024-11-10}
-}
-
 @misc{Cockx2021_blog,
   author  = {Cockx, Jesper},
   title   = {1001 Representations of Syntax with Binding},
@@ -567,18 +674,6 @@
   volume   = {12}
 }
 
-@article{Swierstra2008_a_la_carte,
-  title     = {Data types \`a la carte},
-  volume    = {18},
-  doi       = {10.1017/S0956796808006758},
-  number    = {4},
-  journal   = {Journal of Functional Programming},
-  publisher = {Cambridge University Press},
-  author    = {Swierstra, Wouter},
-  year      = {2008},
-  pages     = {423–436}
-}
-
 @misc{Kudasov2022_arXiv_free_scoped,
   title           = {{Functional Pearl: Dependent type inference via free higher-order unification}},
   author          = {Nikolai Kudasov},
@@ -662,24 +757,6 @@
   booktitle = {Encyclopedia of Computer Science},
   pages     = {129--131},
   year      = {2003}
-}
-
-@inproceedings{BNFC,
-  author    = {Forsberg, Markus and Ranta, Aarne},
-  title     = {BNF converter},
-  year      = {2004},
-  isbn      = {1581138504},
-  publisher = {Association for Computing Machinery},
-  address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/1017472.1017475},
-  doi       = {10.1145/1017472.1017475},
-  abstract  = {We will demonstrate BNFC (the BNF Converter) [7, 6], a multi-lingual compiler tool. BNFC takes as its input a grammar written in LBNF (Labelled BNF) notation, and generates a compiler front-end (an abstract syntax, a lexer, and a parser). Furthermore, it generates a case skeleton usable as the starting point of back-end construction, a pretty printer, a test bench, and a LaTeX document usable as language specification. The program components can be generated in Haskell, Java, C and C++ and their standard parser and lexer tools. BNFC itself was written in Haskell.The methodology used for the generated front-end is based on Appel's books on compiler construction [3, 1, 2]. BNFC has been used as a teaching tool in compiler construction courses at Chalmers. It has also been applied to research-related programming language development, and in an industrial application producing a compiler for a telecommunications protocol description language [4].BNFC is freely available under the GPL license at its website and in the testing distribution of Debian Linux.},
-  booktitle = {Proceedings of the 2004 ACM SIGPLAN Workshop on Haskell},
-  pages     = {94–95},
-  numpages  = {2},
-  keywords  = {pretty printer, parser generator, grammar, document automation, compiler construction, abstract syntax, BNF},
-  location  = {Snowbird, Utah, USA},
-  series    = {Haskell '04}
 }
 
 @misc{haskell_happy,
@@ -827,31 +904,11 @@
   howpublished = {\url{https://github.com/lamdu/hypertypes}}
 }
 
-@misc{ExpressionProblem,
-  author       = {{Wikipedia contributors}},
-  title        = {Expression problem --- {Wikipedia}{,} The Free Encyclopedia},
-  year         = {2024},
-  howpublished = {\url{https://en.wikipedia.org/w/index.php?title=Expression_problem&oldid=1254902747}},
-  note         = {[Online; accessed 4-December-2024]}
-}
-
 @article{Heeren2002GeneralizingHindleyMilner,
   title     = {Generalizing Hindley-Milner type inference algorithms},
   author    = {Heeren, BJ and Hage, Jurriaan and Swierstra, S Doaitse and others},
   year      = {2002},
   publisher = {Utrecht University: Information and Computing Sciences}
-}
-
-@inproceedings{FreeFoil,
-  author    = {Kudasov, Nikolai and Shakirova, Renata and Shalagin, Egor and Tyulebaeva, Karina},
-  booktitle = {2024 4th International Conference on Code Quality (ICCQ)},
-  title     = {Free Foil: Generating Efficient and Scope-Safe Abstract Syntax},
-  year      = {2024},
-  volume    = {},
-  number    = {},
-  pages     = {1-16},
-  keywords  = {Codes;Prototypes;Syntactics;Benchmark testing;Generators;Encoding;Safety;abstract syntax;second-order;capture-avoiding substitution;free monads},
-  doi       = {10.1109/ICCQ60895.2024.10576867}
 }
 
 @inproceedings{AbelPientka2011,
