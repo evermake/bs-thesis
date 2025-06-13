@@ -41,6 +41,13 @@
   series    = {POPL '82}
 }
 
+@article{Damas1984_TypeAssignment,
+  title     = {Type assignment in programming languages},
+  author    = {Damas, Luis},
+  year      = {1984},
+  publisher = {The University of Edinburgh}
+}
+
 @techreport{Remy1992_SortedEqTheoryTypes,
   title       = {{Extension of ML type system with a sorted equation theory on types}},
   author      = {R{\'e}my, Didier},
@@ -65,47 +72,47 @@
 }
 
 @inproceedings{Mairson1989_MLTypabilityExponential,
-  author = {Mairson, Harry G.},
-  title = {Deciding ML typability is complete for deterministic exponential time},
-  year = {1989},
-  isbn = {0897913434},
+  author    = {Mairson, Harry G.},
+  title     = {Deciding ML typability is complete for deterministic exponential time},
+  year      = {1989},
+  isbn      = {0897913434},
   publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/96709.96748},
-  doi = {10.1145/96709.96748},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/96709.96748},
+  doi       = {10.1145/96709.96748},
   booktitle = {Proceedings of the 17th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
-  pages = {382–401},
-  numpages = {20},
-  location = {San Francisco, California, USA},
-  series = {POPL '90}
+  pages     = {382–401},
+  numpages  = {20},
+  location  = {San Francisco, California, USA},
+  series    = {POPL '90}
 }
 
 @article{Simon2002_SecretsGHC,
-  author = {Peyton Jones, Simon and Marlow, Simon},
-  title = {Secrets of the Glasgow Haskell Compiler inliner},
-  year = {2002},
-  month = {July},
+  author   = {Peyton Jones, Simon and Marlow, Simon},
+  title    = {Secrets of the Glasgow Haskell Compiler inliner},
+  year     = {2002},
+  month    = {July},
   abstract = {Higher-order languages, such as Haskell, encourage the programmer to build abstractions by composing functions. A good compiler must inline many of these calls to recover an efficiently executable program.
-
-  In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat.
-
-  The purpose of this paper is, therefore, to articulate the key lessons we learned from a full-scale ``production'' inliner, the one used in the Glasgow Haskell compiler. We focus mainly on the algorithmic aspects, but we also provide some indicative measurements to substantiate the importance of various aspects of the inliner.
-
-  The "Related File" link above is an earlier tech-report version of the paper, but the JFP version is the one to read (the "View publication" button).},
-  url = {https://www.microsoft.com/en-us/research/publication/secrets-of-the-glasgow-haskell-compiler-inliner/},
-  pages = {393-434},
-  journal = {Journal of Functional Programming},
-  volume = {12},
+              
+              In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat.
+              
+              The purpose of this paper is, therefore, to articulate the key lessons we learned from a full-scale ``production'' inliner, the one used in the Glasgow Haskell compiler. We focus mainly on the algorithmic aspects, but we also provide some indicative measurements to substantiate the importance of various aspects of the inliner.
+              
+              The "Related File" link above is an earlier tech-report version of the paper, but the JFP version is the one to read (the "View publication" button).},
+  url      = {https://www.microsoft.com/en-us/research/publication/secrets-of-the-glasgow-haskell-compiler-inliner/},
+  pages    = {393-434},
+  journal  = {Journal of Functional Programming},
+  volume   = {12}
 }
 
 @misc{Foil,
-  title={The Foil: Capture-Avoiding Substitution With No Sharp Edges}, 
-  author={Dougal Maclaurin and Alexey Radul and Adam Paszke},
-  year={2022},
-  eprint={2210.04729},
-  archivePrefix={arXiv},
-  primaryClass={cs.PL},
-  url={https://arxiv.org/abs/2210.04729}, 
+  title         = {The Foil: Capture-Avoiding Substitution With No Sharp Edges},
+  author        = {Dougal Maclaurin and Alexey Radul and Adam Paszke},
+  year          = {2022},
+  eprint        = {2210.04729},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.PL},
+  url           = {https://arxiv.org/abs/2210.04729}
 }
 
 @inproceedings{FreeFoil,
@@ -118,6 +125,63 @@
   pages     = {1-16},
   keywords  = {Codes;Prototypes;Syntactics;Benchmark testing;Generators;Encoding;Safety;abstract syntax;second-order;capture-avoiding substitution;free monads},
   doi       = {10.1109/ICCQ60895.2024.10576867}
+}
+
+@inproceedings{BNFC,
+  author    = {Forsberg, Markus and Ranta, Aarne},
+  title     = {BNF converter},
+  year      = {2004},
+  isbn      = {1581138504},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/1017472.1017475},
+  doi       = {10.1145/1017472.1017475},
+  abstract  = {We will demonstrate BNFC (the BNF Converter) [7, 6], a multi-lingual compiler tool. BNFC takes as its input a grammar written in LBNF (Labelled BNF) notation, and generates a compiler front-end (an abstract syntax, a lexer, and a parser). Furthermore, it generates a case skeleton usable as the starting point of back-end construction, a pretty printer, a test bench, and a LaTeX document usable as language specification. The program components can be generated in Haskell, Java, C and C++ and their standard parser and lexer tools. BNFC itself was written in Haskell.The methodology used for the generated front-end is based on Appel's books on compiler construction [3, 1, 2]. BNFC has been used as a teaching tool in compiler construction courses at Chalmers. It has also been applied to research-related programming language development, and in an industrial application producing a compiler for a telecommunications protocol description language [4].BNFC is freely available under the GPL license at its website and in the testing distribution of Debian Linux.},
+  booktitle = {Proceedings of the 2004 ACM SIGPLAN Workshop on Haskell},
+  pages     = {94–95},
+  numpages  = {2},
+  keywords  = {pretty printer, parser generator, grammar, document automation, compiler construction, abstract syntax, BNF},
+  location  = {Snowbird, Utah, USA},
+  series    = {Haskell '04}
+}
+
+@inproceedings{SheardPeytonJones2002_TH,
+  author    = {Tim Sheard and
+               Simon Peyton Jones},
+  editor    = {Manuel M. T. Chakravarty},
+  title     = {Template meta-programming for Haskell},
+  booktitle = {Proceedings of the 2002 {ACM} {SIGPLAN} Workshop on Haskell, Haskell
+               2002, Pittsburgh, Pennsylvania, USA, October 3, 2002},
+  pages     = {1--16},
+  publisher = {{ACM}},
+  year      = {2002},
+  url       = {https://doi.org/10.1145/581690.581691},
+  doi       = {10.1145/581690.581691},
+  timestamp = {Fri, 03 Jun 2022 10:47:01 +0200},
+  biburl    = {https://dblp.org/rec/conf/haskell/SheardJ02.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@incollection{BackusNaurForm2003,
+  title     = {Backus-naur form (bnf)},
+  author    = {McCracken, Daniel D and Reilly, Edwin D},
+  booktitle = {Encyclopedia of Computer Science},
+  pages     = {129--131},
+  year      = {2003}
+}
+
+@misc{haskell_happy,
+  author       = {{Haskell Community}},
+  title        = {Happy - The Parser Generator for Haskell},
+  year         = {2024},
+  howpublished = {\url{https://github.com/haskell/happy}}
+}
+
+@misc{haskell_alex,
+  author       = {{Haskell Community}},
+  title        = {Alex - A Lexical Analyser Generator for Haskell},
+  year         = {2024},
+  howpublished = {\url{https://github.com/haskell/alex}}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,24 +217,6 @@
   author    = {Pierce, Benjamin C},
   year      = {2002},
   publisher = {MIT press}
-}
-
-@inproceedings{BNFC,
-  author    = {Forsberg, Markus and Ranta, Aarne},
-  title     = {BNF converter},
-  year      = {2004},
-  isbn      = {1581138504},
-  publisher = {Association for Computing Machinery},
-  address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/1017472.1017475},
-  doi       = {10.1145/1017472.1017475},
-  abstract  = {We will demonstrate BNFC (the BNF Converter) [7, 6], a multi-lingual compiler tool. BNFC takes as its input a grammar written in LBNF (Labelled BNF) notation, and generates a compiler front-end (an abstract syntax, a lexer, and a parser). Furthermore, it generates a case skeleton usable as the starting point of back-end construction, a pretty printer, a test bench, and a LaTeX document usable as language specification. The program components can be generated in Haskell, Java, C and C++ and their standard parser and lexer tools. BNFC itself was written in Haskell.The methodology used for the generated front-end is based on Appel's books on compiler construction [3, 1, 2]. BNFC has been used as a teaching tool in compiler construction courses at Chalmers. It has also been applied to research-related programming language development, and in an industrial application producing a compiler for a telecommunications protocol description language [4].BNFC is freely available under the GPL license at its website and in the testing distribution of Debian Linux.},
-  booktitle = {Proceedings of the 2004 ACM SIGPLAN Workshop on Haskell},
-  pages     = {94–95},
-  numpages  = {2},
-  keywords  = {pretty printer, parser generator, grammar, document automation, compiler construction, abstract syntax, BNF},
-  location  = {Snowbird, Utah, USA},
-  series    = {Haskell '04}
 }
 
 @article{Swierstra2008_a_la_carte,
@@ -381,23 +427,6 @@
   keywords  = {API design, formal methods, higher-rank types, software engineering},
   location  = {St. Louis, MO, USA},
   series    = {Haskell 2018}
-}
-
-@inproceedings{SheardPeytonJones2002,
-  author    = {Tim Sheard and
-               Simon Peyton Jones},
-  editor    = {Manuel M. T. Chakravarty},
-  title     = {Template meta-programming for Haskell},
-  booktitle = {Proceedings of the 2002 {ACM} {SIGPLAN} Workshop on Haskell, Haskell
-               2002, Pittsburgh, Pennsylvania, USA, October 3, 2002},
-  pages     = {1--16},
-  publisher = {{ACM}},
-  year      = {2002},
-  url       = {https://doi.org/10.1145/581690.581691},
-  doi       = {10.1145/581690.581691},
-  timestamp = {Fri, 03 Jun 2022 10:47:01 +0200},
-  biburl    = {https://dblp.org/rec/conf/haskell/SheardJ02.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @article{Chargueraud2012,
@@ -656,24 +685,6 @@
   series    = {IFL '22}
 }
 
-@article{PeytonJonesMarlow2002,
-  author   = {Peyton Jones, Simon and Marlow, Simon},
-  title    = {Secrets of the Glasgow Haskell Compiler inliner},
-  year     = {2002},
-  month    = {07},
-  abstract = {Higher-order languages, such as Haskell, encourage the programmer to build abstractions by composing functions. A good compiler must inline many of these calls to recover an efficiently executable program.
-              
-              In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat.
-              
-              The purpose of this paper is, therefore, to articulate the key lessons we learned from a full-scale ``production'' inliner, the one used in the Glasgow Haskell compiler. We focus mainly on the algorithmic aspects, but we also provide some indicative measurements to substantiate the importance of various aspects of the inliner.
-              
-              The "Related File" link above is an earlier tech-report version of the paper, but the JFP version is the one to read (the "View publication" button).},
-  url      = {https://www.microsoft.com/en-us/research/publication/secrets-of-the-glasgow-haskell-compiler-inliner/},
-  pages    = {393-434},
-  journal  = {Journal of Functional Programming},
-  volume   = {12}
-}
-
 @misc{Kudasov2022_arXiv_free_scoped,
   title           = {{Functional Pearl: Dependent type inference via free higher-order unification}},
   author          = {Nikolai Kudasov},
@@ -751,21 +762,6 @@
   pages   = {77–91}
 }
 
-@incollection{BackusNaurForm2003,
-  title     = {Backus-naur form (bnf)},
-  author    = {McCracken, Daniel D and Reilly, Edwin D},
-  booktitle = {Encyclopedia of Computer Science},
-  pages     = {129--131},
-  year      = {2003}
-}
-
-@misc{haskell_happy,
-  author       = {Haskell Community},
-  title        = {Happy - The Parser Generator for Haskell},
-  year         = {2024},
-  howpublished = {\url{https://github.com/haskell/happy}},
-}
-
 @inproceedings{Xtext2010,
   author    = {Eysholdt, Moritz and Behrens, Heiko},
   title     = {Xtext: Implement Your Language Faster than the Quick and Dirty Way},
@@ -820,13 +816,6 @@
   pages      = {425–436},
   numpages   = {12},
   keywords   = {nondeterministic parsing, deterministic finite automata, context-sensitive parsing, backtracking, glr, syntactic predicates, memoization, augmented transition networks, subset construction, semantic predicates, peg}
-}
-
-@article{Happy1997,
-  title   = {Happy user guide},
-  author  = {Marlow, Simon and Gill, Andy},
-  journal = {Glasgow University, December},
-  year    = {1997}
 }
 
 @misc{functionK,

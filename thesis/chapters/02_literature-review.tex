@@ -1,0 +1,184 @@
+\chapter{Literature Review}
+\label{chap:lr}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% - Identify groups of related work (e.g. variations of an algorithm, implementations, theoretical results, etc.)
+% - This section may include papers (published research, pre-prints), existing libraries, software, blog posts, etc.
+% - You should not copy-paste abstract of a reviewed paper. Instead, you must read it carefully and identify the key points of this work that relate to your thesis.
+% - To cover:
+%   - системы типов и HM
+%   - раздел про free-foil с описанием (главное: про что он и как им пользоваться)
+
+% TODO: изучить и упомянуть HM(X)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Hindley-Milner Type System}
+
+In 1969, Hindley discovered an approach of computing a principal type scheme for a given object in combinatory logic \cite{Hindley1969_PrincipalTypeScheme}. Later, in 1978, Milner introduced two algorithms for inferring polymorphic type for a given program: algorithm $\mathcal{W}$ and $\mathcal{J}$, and proved soundness of $\mathcal{W}$ \cite{Milner1978_TypePolymorphism}. Finally, in 1984 \cite{Damas1984_TypeAssignment}, Damas proved completeness of $\mathcal{W}$ and that if $\mathcal{W}$ succeeds, it finds the principal type scheme (the most general type) of a given term.
+
+Hindley's "principal type scheme" and Milner's "polymorphic type" mean 
+
+<... and known in literature as Hindley-Milner (HM) type system ...>
+
+<explain constraints, unification and substitution>
+
+<explain let-polymorphism>
+
+<show typing rules and introduce the efficiency problem of type generalization process>
+
+\begin{figure}[H]
+\begin{mathpar}
+  \inferrule
+    {\tau = \texttt{newvar} \quad
+    \Gamma, x : \tau \vdash e : \tau'}
+    {\Gamma \vdash \lambda x. e : \tau \to \tau'}
+    \,[\texttt{Abs}]
+
+  \inferrule
+    {\Gamma \vdash e_0 : \tau_0 \quad
+    \Gamma \vdash e_1 : \tau_1 \quad
+    \tau' = \texttt{newvar} \quad
+    \texttt{unify}(\tau_0, \tau_1 \to \tau')}
+    {\Gamma \vdash e_0\,e_1 : \tau'}
+    \,[\texttt{App}]
+
+  \inferrule
+    {\Gamma \vdash e_0 : \tau \quad
+    \Gamma, x : \overline{\Gamma}(\tau) \vdash e_1 : \tau'}
+    {\Gamma \vdash \texttt{let } x = e_0 \texttt{ in } e_1 : \tau'}
+    \,[\texttt{Let}]
+  
+  \inferrule
+    {x : \sigma \in \Gamma \quad
+    \tau = \texttt{inst}(\sigma)}
+    {\Gamma \vdash x : \tau}
+    \,[\texttt{Var}]
+
+  \overline{\Gamma}(\tau) = \forall \hat{\alpha}.\tau
+
+  \hat{\alpha} = \texttt{free}(\tau) \setminus \texttt{free}(\Gamma)
+\end{mathpar}
+\caption{Algorithm $\mathcal{J}$ typing rules}
+\end{figure}
+
+\section{Levels}
+
+\texttt{let}-polymorphism in HM consists of two steps: generalization and specialization (or instantiation). First, we need to quantify free variables in a monotype bound to \texttt{let} to obtain its' type scheme (or polytype). Then, at each occurance in the expression under \texttt{let}, we specialize that polytype by replacing quantified type variables with the fresh variables.
+
+However, quantifying all type variables in a type would result in unsound type checking. Consider the following expression:
+
+$$
+\lambda x." "\texttt{let}" "y = (\lambda z.x)" "\texttt{in}" "y
+$$
+
+% $$
+% \Gamma, x : A \vdash (\lambda z. x) : \overline{\Gamma}(B \to A)
+% $$
+
+% \clearpage
+
+\begin{prooftree*}
+  % \infer0[by (Env \(x\))]{x \vdash \diamond}
+  % \infer1[by (Type Const)]{x \vdash K}
+  % \infer0[by (Env \(x\))]{x \vdash \diamond}
+  % \infer1[by (Type Const)]{x \vdash K}
+  % \infer2[by (Type Arrow)]{x \vdash K \to K}
+  % \infer1[by (Env \(x\))]{x, y: K \to K  \vdash  \diamond}
+  % \infer1[by (Type Const)]{x, y: K \to K  \vdash  K}
+  % \infer1[by (Env \(x\))]{x, y: K \to K, z:K  \vdash \diamond}
+  % \infer1[by (Val \(x\))]{x, y: K \to K, z:K  \vdash y : K \to K}      
+
+  % \infer0[by (Env \(x\))]{x \vdash \diamond}
+  % \infer1[by (Type Const)]{x \vdash K}
+  % \infer0[by (Env \(x\))]{x \vdash \diamond}
+  % \infer1[by (Type Const)]{x \vdash K}
+  % \infer2[by (Type Arrow)]{x \vdash K \to K}
+  % \infer1[by (Env \(x\))]{x, y: K \to K  \vdash  \diamond}
+  % \infer1[by (Type Const)]{x, y: K \to K  \vdash  K}
+  % \infer1[by (Env \(x\))]{x, y: K \to K, z:K  \vdash \diamond}
+  % \infer1[by (Val \(x\))]{x, y: K \to K, z:K  \vdash z : K \to K}  
+
+  % \infer2[by (Val Appl)]{x, y: K \to K, z:K  \vdash y(z) : K}  
+  % \infer1[by (Val Fun)]{x, y: K \to K, z:K  \vdash \lambda z : K.y(z) : K \to K}           
+
+  \hypo{y : \forall \alpha . \forall \beta. \alpha \to \beta \to \alpha \vdash}
+  \infer1{\Gamma \vdash y : A \to (B \to A)}
+  \infer1[\texttt{[Abs]}]{\Gamma \vdash \lambda x. \texttt{let } y = (\lambda z.x) \texttt{ in } y : A \to (B \to A)}
+\end{prooftree*}
+
+...
+
+Type generalization in \texttt{let}-expressions in algorithms $\mathcal{W}$ and $\mathcal{J}$ is inefficient as it requires scanning both the type and the entire type environment.
+
+A more efficient, though not widely-known, algorithm has been discovered by R\'emy~\cite{Remy1992_SortedEqTheoryTypes} and shown to be successfully adopted in the OCaml programming language as illustrated in Kiselyov's tech report \cite{Kiselyov2022_OCamplTypeChecker}.
+
+\section{Binders and Substitution}
+
+An integral feature of any programming language or formal system is an ability to work with bound names (or local variables), e.g. a parameter of a $\lambda$-abstraction. In the example below, $x$ is said to be \textit{bound} by a \textit{binder} $\lambda x.$, and $y$ is said to be \textit{free} as it does not have a binder:
+
+$$
+\lambda x." "x" "y
+$$
+
+The main pain point of name management is (maybe scoping?) substitution. We may want to replace the occurances of the variable bound by $\lambda$-abstraction, in order to reduce the expression. Or during type inference, when specializing a polymorphic type in let expression, it is necessary to substitute quantified type variables with the fresh ones. Both these tasks, as well as many others, require a substitution. However, implementing a substitution is not trivial at all.
+
+To illustrate why substitution is not an easy task, consider the process of reduction of this $\lambda$-expression:
+
+\begin{align*}
+  & (\lambda x. \lambda y. x) y \\
+  & \rightarrow \text{($\beta$-reduction)} \\
+  & [x \mapsto y](\lambda y. x) \\
+  & \rightarrow \text{(substitution)} \\
+  & \textcolor{red}{\lambda y. y}
+\end{align*}
+
+We got an identity function, which is wrong, since $y$ in the body of $\lambda$-abstraction is not the same $y$ as before, it has been \textit{captured}. Direct substitution does not work in this case. Instead, we need a \textit{capture avoiding} substitution.
+
+<вот существует несколько разных подходов для реализации capture avoiding substitution: a, b, c... вот она работают так-то. один из самых быстрых rapier из GHC, но с ним такие-то проблемы... foil... free-foil>
+
+\section{Free Foil}
+
+...
+
+By scope-safe abstract syntax we mean abstract representation of the language terms, which includes information about the scopes on a type level.
+
+By generic abstract syntax we mean abstract representation of the language terms, where 
+
+...
+
+Scope-safe generic abstract syntax can be generated with Free Foil in two ways: by using free scoped monads or via Template Haskell \cite{SheardPeytonJones2002_TH} GHC extension, i.e. metaprogramming. In this work we have chosen the second approach, as it requires writing less code and, more importantly, integrates nicely with BNFC.
+
+\section{Code Generation Tools}
+
+Backus–Naur Form Converter (BNFC) \cite{BNFC} is a tool for generating compiler front-end for an object language, given its' grammar in Labelled BNF \cite{BackusNaurForm2003}. By assigning a label to each rule in the grammar, we tell the BNFC what constructors to use when generating the syntax tree in the host language.
+
+Figure~\ref{fig:lbnf-bnfc-example} below illustrates how BNF rules and their labels defined in the grammar file correspond to the Haskell code generated by BNFC. Different rules with the same label correspond to the different constructors of the same type. In the generated code, terminals from the grammar (such as \texttt{"true"} in the \texttt{ETrue} rule) are omitted, while non-terminals (such as \texttt{Exp1} and \texttt{Exp2} in the \texttt{EAdd} rule) become parameters of the corresponding type constructor. Lastly, integer postfix in the name of each rule only serves as the precedence level of this rule, and is ommitted in the resulting type name. Thus, both \texttt{Exp1} and \texttt{Exp2} are merged to \texttt{Exp} in code.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \begin{minted}[frame=single,fontsize=\small]{text}
+EVar.    Exp2 ::= Ident ;
+ETrue.   Exp2 ::= "true" ;
+EFalse.  Exp2 ::= "false" ;
+ENat.    Exp2 ::= Integer ;
+EAdd.    Exp1 ::= Exp1 "+" Exp2 ;
+    \end{minted}
+    \hfill
+  \end{minipage}
+  \begin{minipage}{0.49\textwidth}
+    \begin{minted}[frame=single,fontsize=\small]{haskell}
+data Exp
+  = EVar Ident
+  | ETrue 
+  | EFalse
+  | ENat Integer
+  | EAdd Exp Exp
+    \end{minted}
+  \end{minipage}
+  \caption{Example of LBNF grammar and corresponding snippet of the Haskell code generated by BNFC.}
+  \label{fig:lbnf-bnfc-example}
+\end{figure}
+
+BNFC significantly simplifies the process of prototyping a compiler, or a type checker for an object language. By supplying only the language grammar to BNFC, user gets a handful of functionality generated automatically, such as abstract syntax with pretty-printing, and, more importantly, specifications for lexer and parser generators. In fact, to further generate code of the lexer and parser, additional language-specific tools are required. And since the focus of this work is to implement a type checker in \textit{Haskell}, we use BNFC together with Alex \cite{haskell_alex}, a lexer generator, and Happy \cite{haskell_happy}, a parser generator.
