@@ -1,4 +1,7 @@
 {
+  "editor.wordWrap": "bounded",
+  "editor.wordWrapColumn": 80,
+
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -38,5 +41,9 @@
     "**/*.pdfsync": true,
     "**/*.rubbercache": true,
     "**/rubber.cache": true,
+
+    // ## Minted auxiliary files:
+    "**/_minted*": true,
+    "**/*.pyg": true,
   }
 }
