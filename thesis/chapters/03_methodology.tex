@@ -1,4 +1,4 @@
-\chapter{Design and Methodology}
+\chapter{\todored{Design and Methodology}}
 \label{chap:methodology}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,10 +16,29 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Technology Stack}
+\begin{figure}[H]
+  \begin{mathpar}
+    \inferrule
+      {e \text{ is a natural number}}
+      {e : \texttt{Nat}}
+      \,[\texttt{ENat}]
 
-\begin{enumerate}
-  \item Haskell
-  \item BNFC, Happy, Alex
-  \item Free Foil
-\end{enumerate}
+    \texttt{true} : \texttt{Bool}\,[\texttt{ETrue}]
+
+    \texttt{false} : \texttt{Bool}\,[\texttt{EFalse}]
+
+    \inferrule
+      {x : \sigma \in \Gamma \quad
+      \tau = \texttt{inst}(\sigma)}
+      {\Gamma \vdash x : \tau}
+      \,[\texttt{Var}]
+  \end{mathpar}
+  \caption{Algorithm $\mathcal{L}$ typing rules.}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{mathpar}
+    \overline{\Gamma}_l(\tau) = \forall \{\,\alpha | \alpha \in \texttt{free}(\tau) \text{ and } L(\alpha) > l\,\} .\tau
+  \end{mathpar}
+  \caption{Generalization via levels.}
+\end{figure}

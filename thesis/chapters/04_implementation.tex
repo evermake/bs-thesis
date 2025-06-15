@@ -1,4 +1,4 @@
-\chapter{Implementation}
+\chapter{\todoorange{Implementation}}
 \label{chap:implementation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9,9 +9,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-First, we need to define the grammar of the target language, for which the type inference is to be implemented. We do it using labeled BNF grammar ...
+In this chapter, we present an implementation of the mentioned type inference algorithm in Haskell. First, we define object language grammar and generate front-end of the type checker. Second, we generate generic abstract syntax with Free Foil. Then, we introduce core data types and explain how algorithm works. Finally, we talk about testing and related difficulties.
 
-\section{Language Grammar and Parser}
+\section{\todoorange{Language Grammar and Parser}}
 
 <упомянуть тот факт, что у нас в грамматике языка определен и выражения, и типы, и объяснить почему так (для простоты реализации и генерации AST с помощью free-foil)>
 
@@ -21,7 +21,7 @@ BNF notation,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Generating Abstract Syntax}
+\section{\todored{Generating Abstract Syntax}}
 
 ...free foil...
 
@@ -29,7 +29,7 @@ BNF notation,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\texttt{inferType} function}
+\section{\todoorange{Inference Algorithm}}
 
 <...TypingContext and its' components...>
 
@@ -62,7 +62,7 @@ How \texttt{inferType} works? It recursively infers a type of a given AST node (
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Unification}
+\section{\todored{Unification}}
 
 ...
 
@@ -70,13 +70,13 @@ How \texttt{inferType} works? It recursively infers a type of a given AST node (
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Testing}
+\section{\todogreen{Testing}}
 
 A test suite consisting of 19 ill typed and 33 well typed programs has been developed when implementing the type inference. This helped to find bugs during development and, to some extent, verify the correctness of the implemented algorithm.
 
 Test cases with ill typed programs check that inference algorithm indeed fails to infer type of such programs. For an ill typed program, test case passes only if the \texttt{inferTypeClosed} returns an error, for example, when unification of \texttt{TBool} with \texttt{TNat} is attempted, or when "occurs check" fails. We, however, do not check that the exact reason of failure is as expected for ill typed programs, which is left for the future work.
 
-Test cases with well typed programs check that the inference algorithm successfully infers the type and it is correct. In order to check that the inferred type is correct, each well typed program is accompanied with additional file that contains the correct type of a program. For a well type program, test case passes only if the \texttt{inferTypeClosed} returns a type and this type matches the expected type. By "matches" we mean that two polymorphic types are alpha-equivalent, except that the order of \texttt{forall} binders does not matter, in other words, we assume that types $\forall \alpha. \forall \beta. \alpha \to \beta$ and $\forall \beta. \forall \alpha. \alpha \to \beta$ are equal. Such assumption made it easier to add new test cases, as we do not need to care about implementation details when writing expected types for the well typed programs.
+Test cases with well typed programs check that the inference algorithm successfully infers the type and it is correct. In order to check that the inferred type is correct, each well typed program is accompanied with additional file that contains the expected type of a program. For a well type program, test case passes only if the \texttt{inferTypeClosed} successfully returns a type that matches the expected type. By "matches" we mean that two polymorphic types are alpha-equivalent, except that the order of \texttt{forall} binders does not matter, in other words, we assume that types $\forall \alpha. \forall \beta. \alpha \to \beta$ and $\forall \beta. \forall \alpha. \alpha \to \beta$ are equal. Such assumption made it easier to add new test cases, as we do not need to think about implementation details when specifying expected types for the well typed programs.
 
 It is worth mentioning how the comparison of an actual and expected types is implemented for a well typed test case, which is not straightforward. We could use the \texttt{alphaEquiv} function provided by the free-foil package for this purpose. However, it does not distinguish values of the literals (as illustrated in Figure~\ref{fig:freefoil-alphaequiv-literals}), and, therefore, is not suitable for comparing types containing free variables. A possible workaround would be to generalize both types before performing a comparison, as this would replace all free type variables with the variables bound by "forall"s. But still, this will not work in our case (see Figure~\ref{fig:freefoil-alphaequiv-foralls}), since we do not want the order of "forall"s in the types to influence the comparison. Therefore, free-foil's \texttt{alphaEquiv} does not fit our needs and another approach is necessary.
 
@@ -110,13 +110,13 @@ False
   \label{fig:freefoil-alphaequiv-foralls}
 \end{figure}
 
-Formally, we consider two polymorphic types equal (see Figure~\ref{fig:alpha-equiv-polytypes}) if there exists a substitution of their bound type variables such that, after applying this substitution, the two types become syntactically identical (i.e., alpha-equivalent), regardless of the order in which the "forall" quantifiers appear. In the implementation, we compare two polymorphic types using the \texttt{alphaEquivPoly} function (see Figure~\ref{fig:alpha-equiv-polytypes}), which works as follows.
+Formally, we consider two polymorphic types equal (see Figure~\ref{fig:alpha-equiv-poly-rule}) if there exists a substitution of their bound type variables such that, after applying this substitution, the two types become syntactically identical, i.e. alpha-equivalent, regardless of the order in which the "forall" quantifiers appear. In the implementation, we compare two polymorphic types using the \texttt{alphaEquivPoly} function (see Figure~\ref{fig:alpha-equiv-poly-impl}), which works as follows.
 
-First, we generalize both types for all present variables and immediately specialize them (lines 3 and 4). By doing this, we re-assign all existing free variables, if any, with the fresh ones, which is necessary to make sure all variables are present in \texttt{tcLevelMap} field, which is used later. Also, specialized types now can only have free type variables, i.e. no \texttt{forall}s will be present in the types. Moreover, \texttt{xs} and \texttt{ys} returned by \texttt{specialize} contain all type variables in the types, since they were generalized before, so at this step we may already conclude that \texttt{l} and \texttt{r} are not equal, if the number of unique type variables differs, that is \texttt{length xs /= length ys} (lines 5 and 6). If it is not the case, we proceed further.
+First, we generalize both types for all present variables and immediately specialize them (lines 3 and 4). By doing this, we re-assign all existing free variables, if any, with the fresh ones, which is necessary to make sure all variables are present in the \texttt{tcLevelMap} in the \texttt{TypeInferencer} context, which is used later. Also, specialized types now can only have free type variables, i.e. no \texttt{forall}s will be present in the types. Moreover, \texttt{xs} and \texttt{ys} returned by \texttt{specialize} contain all type variables in the types, since they were generalized before, so at this step we may already conclude that \texttt{l} and \texttt{r} are not equal, if the number of unique type variables differs, that is \texttt{length xs /= length ys} (lines 5 and 6). If it is not the case, we proceed further.
 
 Next, we actually need to perform the alpha equivalence check. However, as was mentioned earlier, \texttt{FreeFoil.alphaEquiv} will not work correctly with the free variables. We solve the problem by using the already mentioned unification algorithm in order to unify a single constraint, in other words, we solve a single equation of form $l = r$ to get a substitution \texttt{subst}.
 
-Finally, after obtaining the substitution, we check that it matches all type variables from the left type to those in the right type, and that all variables are accounted for, ensuring a one-to-one correspondence between variables in both types. If the substitution is not found, or type variables in \texttt{l} do not correspond to type variables in \texttt{l}, we conclude that types are not equal. The reason why \texttt{alphaEquivPoly} works in the \texttt{TypeInferencer} context and uses the \texttt{tcLevelMap} is only because \texttt{specialize} and \texttt{unifyConstraint} need this, which, could be avoided.
+Finally, after obtaining the substitution, we check that it matches all type variables from the left type to those in the right type, and that all variables are accounted for, ensuring a one-to-one correspondence between variables in both types. If the substitution is not found, or type variables in \texttt{l} do not correspond to type variables in \texttt{l}, we conclude that types are not equal. The reason why \texttt{alphaEquivPoly} works in the \texttt{TypeInferencer} context and uses the \texttt{tcLevelMap} is only because \texttt{specialize} and \texttt{unifyConstraint} need this, which, could be avoided, but kept for the sake of simplicity of the implementation.
 
 \begin{figure}[H]
   \begin{prooftree*}
@@ -124,8 +124,8 @@ Finally, after obtaining the substitution, we check that it matches all type var
     \hypo{\{y_{i_1}, \ldots, y_{i_n}\} = \{y_1, \ldots, y_n\}}
     \infer2{ \forall \{x_1, \ldots, x_n\}. T_1 = \forall \{y_1, \ldots, y_n\}. T_2}
   \end{prooftree*}
-
-  \caption{Definition of equivalence of polymorphic types.}
+  \caption{Rule for equivalence of polymorphic types.}
+  \label{fig:alpha-equiv-poly-rule}
 \end{figure}
 
 \begin{figure}[H]
@@ -149,5 +149,5 @@ alphaEquivPoly l r = do
     genAll t = generalizeWithIdents (Set.toList (freeVars t)) t
   \end{minted}
   \caption{Implementation of the \texttt{alphaEquivPoly} function for equivalence check of polymorphic types.}
-  \label{fig:alpha-equiv-polytypes}
+  \label{fig:alpha-equiv-poly-impl}
 \end{figure}

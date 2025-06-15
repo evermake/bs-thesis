@@ -1,4 +1,4 @@
-\chapter{Literature Review}
+\chapter{\todoorange{Literature Review}}
 \label{chap:lr}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9,13 +9,12 @@
 %   - системы типов и HM
 %   - раздел про free-foil с описанием (главное: про что он и как им пользоваться)
 
-% TODO: изучить и упомянуть HM(X)
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Hindley-Milner Type System}
+\section{\todoorange{Hindley-Milner Type System}}
 
-In 1969, Hindley discovered an approach of computing a principal type scheme for a given object in combinatory logic \cite{Hindley1969_PrincipalTypeScheme}. Later, in 1978, Milner introduced two algorithms for inferring polymorphic type for a given program: algorithm $\mathcal{W}$ and $\mathcal{J}$, and proved soundness of $\mathcal{W}$ \cite{Milner1978_TypePolymorphism}. Finally, in 1984 \cite{Damas1984_TypeAssignment}, Damas proved completeness of $\mathcal{W}$ and that if $\mathcal{W}$ succeeds, it finds the principal type scheme (the most general type) of a given term.
+In 1969, Hindley discovered an approach of computing a principal type scheme for a given object in combinatory logic \cite{Hindley1969_PrincipalTypeScheme}. Later, in 1978, Milner introduced two algorithms for inferring polymorphic type for a given program: algorithm $\mathcal{W}$ and $\mathcal{J}$, and proved soundness of $\mathcal{W}$ \cite{Milner1978_TypePolymorphism}. Finally, in 1984 \cite{Damas1984_TypeAssignment}, Damas proved completeness of $\mathcal{W}$ and that $\mathcal{W}$ indeed finds the most general type of a given term. Mentioned works formed the theoretical basis for the type system khown as Hindley-Milner (HM) type system in the literature. HM's ...
+
 
 Hindley's "principal type scheme" and Milner's "polymorphic type" mean 
 
@@ -28,55 +27,58 @@ Hindley's "principal type scheme" and Milner's "polymorphic type" mean
 <show typing rules and introduce the efficiency problem of type generalization process>
 
 \begin{figure}[H]
-\begin{mathpar}
-  \inferrule
-    {\tau = \texttt{newvar} \quad
-    \Gamma, x : \tau \vdash e : \tau'}
-    {\Gamma \vdash \lambda x. e : \tau \to \tau'}
-    \,[\texttt{Abs}]
+  \begin{mathpar}
+    \inferrule
+      {\tau = \texttt{newvar} \quad
+      \Gamma, x : \tau \vdash e : \tau'}
+      {\Gamma \vdash \lambda x. e : \tau \to \tau'}
+      \,[\texttt{Abs}]
 
-  \inferrule
-    {\Gamma \vdash e_0 : \tau_0 \quad
-    \Gamma \vdash e_1 : \tau_1 \quad
-    \tau' = \texttt{newvar} \quad
-    \texttt{unify}(\tau_0, \tau_1 \to \tau')}
-    {\Gamma \vdash e_0\,e_1 : \tau'}
-    \,[\texttt{App}]
+    \inferrule
+      {\Gamma \vdash e_0 : \tau_0 \quad
+      \Gamma \vdash e_1 : \tau_1 \quad
+      \tau' = \texttt{newvar} \quad
+      \texttt{unify}(\tau_0, \tau_1 \to \tau')}
+      {\Gamma \vdash e_0\,e_1 : \tau'}
+      \,[\texttt{App}]
 
-  \inferrule
-    {\Gamma \vdash e_0 : \tau \quad
-    \Gamma, x : \overline{\Gamma}(\tau) \vdash e_1 : \tau'}
-    {\Gamma \vdash \texttt{let } x = e_0 \texttt{ in } e_1 : \tau'}
-    \,[\texttt{Let}]
-  
-  \inferrule
-    {x : \sigma \in \Gamma \quad
-    \tau = \texttt{inst}(\sigma)}
-    {\Gamma \vdash x : \tau}
-    \,[\texttt{Var}]
-
-  \overline{\Gamma}(\tau) = \forall \hat{\alpha}.\tau
-
-  \hat{\alpha} = \texttt{free}(\tau) \setminus \texttt{free}(\Gamma)
-\end{mathpar}
-\caption{Algorithm $\mathcal{J}$ typing rules}
+    \inferrule
+      {\Gamma \vdash e_0 : \tau \quad
+      \Gamma, x : \overline{\Gamma}(\tau) \vdash e_1 : \tau'}
+      {\Gamma \vdash \texttt{let } x = e_0 \texttt{ in } e_1 : \tau'}
+      \,[\texttt{Let}]
+    
+    \inferrule
+      {x : \sigma \in \Gamma \quad
+      \tau = \texttt{inst}(\sigma)}
+      {\Gamma \vdash x : \tau}
+      \,[\texttt{Var}]
+  \end{mathpar}
+  \caption{Algorithm $\mathcal{J}$ typing rules.}
 \end{figure}
 
-\section{Levels}
+\begin{figure}[H]
+  \begin{mathpar}
+    \overline{\Gamma}(\tau) = \forall \hat{\alpha}.\tau
+
+    \hat{\alpha} = \texttt{free}(\tau) \setminus \texttt{free}(\Gamma)  
+  \end{mathpar}
+  \caption{Generalization of a type $\tau$ under context $\Gamma$.}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\todoorange{Levels}}
 
 \texttt{let}-polymorphism in HM consists of two steps: generalization and specialization (or instantiation). First, we need to quantify free variables in a monotype bound to \texttt{let} to obtain its' type scheme (or polytype). Then, at each occurance in the expression under \texttt{let}, we specialize that polytype by replacing quantified type variables with the fresh variables.
 
-However, quantifying all type variables in a type would result in unsound type checking. Consider the following expression:
+However, it is important to quantify only ... type variables. Quantifying other type variables would result in unsound type checking. Consider the following expression:
 
 $$
 \lambda x." "\texttt{let}" "y = (\lambda z.x)" "\texttt{in}" "y
 $$
-
-% $$
-% \Gamma, x : A \vdash (\lambda z. x) : \overline{\Gamma}(B \to A)
-% $$
-
-% \clearpage
 
 \begin{prooftree*}
   % \infer0[by (Env \(x\))]{x \vdash \diamond}
@@ -113,7 +115,11 @@ Type generalization in \texttt{let}-expressions in algorithms $\mathcal{W}$ and 
 
 A more efficient, though not widely-known, algorithm has been discovered by R\'emy~\cite{Remy1992_SortedEqTheoryTypes} and shown to be successfully adopted in the OCaml programming language as illustrated in Kiselyov's tech report \cite{Kiselyov2022_OCamplTypeChecker}.
 
-\section{Binders and Substitution}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\todoorange{Binders and Substitution}}
 
 An integral feature of any programming language or formal system is an ability to work with bound names (or local variables), e.g. a parameter of a $\lambda$-abstraction. In the example below, $x$ is said to be \textit{bound} by a \textit{binder} $\lambda x.$, and $y$ is said to be \textit{free} as it does not have a binder:
 
@@ -121,7 +127,7 @@ $$
 \lambda x." "x" "y
 $$
 
-The main pain point of name management is (maybe scoping?) substitution. We may want to replace the occurances of the variable bound by $\lambda$-abstraction, in order to reduce the expression. Or during type inference, when specializing a polymorphic type in let expression, it is necessary to substitute quantified type variables with the fresh ones. Both these tasks, as well as many others, require a substitution. However, implementing a substitution is not trivial at all.
+The main pain point of name management is scoping, that is keeping track of which names are bound by which binders in order to resolve names correctly avoiding collisions. The common operation of name management is substitution, that is, replacing the occurances of a variable with another expression. We may want to replace the occurances of the variable bound by $\lambda$-abstraction, in order to reduce the expression. Or, during type inference, when specializing a polymorphic type in let expression, it is necessary to substitute quantified type variables with the fresh ones. Both these tasks, as well as many others, require a substitution. However, implementing a substitution is not trivial at all.
 
 To illustrate why substitution is not an easy task, consider the process of reduction of this $\lambda$-expression:
 
@@ -133,11 +139,25 @@ To illustrate why substitution is not an easy task, consider the process of redu
   & \textcolor{red}{\lambda y. y}
 \end{align*}
 
-We got an identity function, which is wrong, since $y$ in the body of $\lambda$-abstraction is not the same $y$ as before, it has been \textit{captured}. Direct substitution does not work in this case. Instead, we need a \textit{capture avoiding} substitution.
+We got an identity function, which is wrong, since $y$ in the body of $\lambda$-abstraction is not the same $y$ as before, it has been \textit{captured}. Naïve substitution does not work in this case. Instead, we need a \textit{capture-avoiding substitution}.
 
-<вот существует несколько разных подходов для реализации capture avoiding substitution: a, b, c... вот она работают так-то. один из самых быстрых rapier из GHC, но с ним такие-то проблемы... foil... free-foil>
+Capture-avoiding substitution is an old and well-studied problem in computer science, with extensive research done as well as numerous practical implementations applied in real-world projects.
 
-\section{Free Foil}
+De~Bruijn indices~\cite{deBruijn1972} is one of the earliest and simplest approaches to capture-avoiding substitution, which suggests to replace bound names with natural numbers representing the position relative to their binder. However, such nameless representation is not efficient in practice due to often shifts and expressions traversal. In recent decades, more efficient approaches to capture-avoiding substitution have emerged. One notable example is the stateless "rapier" technique~\cite{Simon2002_SecretsGHC}, which is used by the Glasgow Haskell Compiler and has proven to be highly performant. % TODO: Maybe reference to some benchmark?
+
+However, besides efficency, it is worth considering another two important aspects when choosing between different name management techniques, which are intrinsic scoping and generality.
+
+\section{Abstract Syntax Representations}
+
+Intrinsically scoped, or scope-safe, abstract syntax representation of the language terms helps to minimize a chance of introducing bugs, by leveraging the power of the host language type system. For example, in 1999 Bird and Paterson \cite{BirdPaterson1999_BruijnNested} showed how invariants of the de Bruijn notation can be described on the type level by using nested datatypes \cite{Bird1998_NestedDatatypes}. Dex programming language~\cite{PaszkeDex_2021} is another illustrative example why using scope-safe abstract syntax is beneficial. When adopting the mentioned "rapier" technique in Dex, Google research team faced many difficulties, which led them to develop the foil~\cite{Foil} — an enhancement that leverages the Haskell's type system to maintain rapier's invariants.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\todoorange{Free Foil}}
+
+Free Foil is a framework proposed by Kudasov \textit{et al.} \cite{FreeFoil}, which generates efficient and scope-safe abstract syntax.
 
 ...
 
@@ -149,7 +169,11 @@ By generic abstract syntax we mean abstract representation of the language terms
 
 Scope-safe generic abstract syntax can be generated with Free Foil in two ways: by using free scoped monads or via Template Haskell \cite{SheardPeytonJones2002_TH} GHC extension, i.e. metaprogramming. In this work we have chosen the second approach, as it requires writing less code and, more importantly, integrates nicely with BNFC.
 
-\section{Code Generation Tools}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\todogreen{Code Generation Tools}}
 
 Backus–Naur Form Converter (BNFC) \cite{BNFC} is a tool for generating compiler front-end for an object language, given its' grammar in Labelled BNF \cite{BackusNaurForm2003}. By assigning a label to each rule in the grammar, we tell the BNFC what constructors to use when generating the syntax tree in the host language.
 
