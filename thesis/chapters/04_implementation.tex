@@ -11,11 +11,108 @@
 
 In this chapter, we present an implementation of the mentioned type inference algorithm in Haskell. First, we define object language grammar and generate front-end of the type checker. Second, we generate generic abstract syntax with Free Foil. Then, we introduce core data types and explain how algorithm works. Finally, we talk about testing and related difficulties.
 
-\section{\todoorange{Language Grammar and Parser}}
+\section{\todogreen{Grammar and Front-end}}
 
-<упомянуть тот факт, что у нас в грамматике языка определен и выражения, и типы, и объяснить почему так (для простоты реализации и генерации AST с помощью free-foil)>
+The object language, for which the type checking is to be implemented is similar to the simply typed lambda-calculus but extended with let polymorphism, boolean and natural number literals. The grammar is defined in Labelled BNF (LBNF), and is divided into two parts: terms (or expressions) and types.
 
-BNF notation, 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{\todogreen{Expressions Grammar}}
+
+The LBNF grammar for expressions is shown in Figure~\ref{fig:lbnf-terms}. We define 7 grammar rules for expressions:
+
+\begin{itemize}
+  \item \texttt{EVar} — variable identifier.
+  \item \texttt{ETrue} and \texttt{EFalse} — boolean literals.
+  \item \texttt{ENat} — natural number literal.
+  \item \texttt{EApp} — function application. Note that subexpression on the right has a higher precedence level, since function application is left associative.
+  \item \texttt{EAbs} — lambda abstraction, which binds a variable to be used in the nested expression.
+  \item \texttt{ELet} — let-binding, which is similar to \texttt{EAbs} but has one more (not scoped) subexpression.
+\end{itemize}
+
+\texttt{Pattern} and \texttt{ScopedExp} rules are essentially wrappers around \texttt{Ident} and \texttt{Exp1} respectively, which are introduced to clearly identify a binder and corresponding scoped expressions where the bound pattern can occur. These rules are crucial for the scope-safe abstract syntax generation, which is described in the next section.
+
+\begin{figure}[H]
+  \begin{minted}[frame=single,fontsize=\small,escapeinside=@@]{text}
+EVar.    Exp3 ::= Ident ;
+ETrue.   Exp3 ::= "true" ;
+EFalse.  Exp3 ::= "false" ;
+ENat.    Exp3 ::= Integer ;
+EApp.    Exp2 ::= Exp2 Exp3 ;
+EAbs.    Exp1 ::= "@$\lambda$@" Pattern "." ScopedExp ;
+ELet.    Exp1 ::= "let" Pattern "=" Exp1 "in" ScopedExp ;
+coercions Exp 3 ;
+
+PatternVar. Pattern ::= Ident ;
+ScopedExp. ScopedExp ::= Exp1 ;
+  \end{minted}
+  \caption[LBNF grammar of the object language terms]{Labelled BNF grammar of the object language terms (expressions). \texttt{Ident} and \texttt{Integer} are predifined basic types in BNFC. The \texttt{coercions} is a macro that automatically generates semantic "no-op" coercion rules that define the precedence of the operators.}
+  \label{fig:lbnf-terms}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{\todogreen{Types Grammar}}
+
+Figure~\ref{fig:lbnf-types} shows the LBNF grammar for types, which defines 6 grammar rules:
+
+\begin{itemize}
+  \item \texttt{TUVar} — free, or unification variable.
+  \item \texttt{TBool} — boolean type.
+  \item \texttt{TNat} — natural number type.
+  \item \texttt{TVar} — type variable.
+  \item \texttt{TArrow} — function type. Unlike function expressions, function types are right associative, therefore, rule to the left of the arrow has higher precedence.
+  \item \texttt{TForAll} — "forall"-quantified type that binds a type variable in the inner type expression.
+\end{itemize}
+
+To distinguish between free and bound variables we prefix unification variable identifiers with "?" by introducing a new \texttt{UVarIdent} lexical type. And, similarly to term expressions, we also define separate \texttt{TypePattern} and \texttt{ScopedType} rules to further generate the scope-safe abstract syntax for types. In case of types, the only rule that binds a (type) variable and has a scoped subexpression is \texttt{TForAll}.
+
+\begin{figure}[H]
+  \begin{minted}[frame=single,fontsize=\small,escapeinside=@@]{text}
+token UVarIdent ('?' letter (letter | digit | '_')*) ;
+
+TUVar.   Type2 ::= UVarIdent ;
+TNat.    Type2 ::= "Nat" ;
+TBool.   Type2 ::= "Bool" ;
+TVar.    Type2 ::= Ident ;
+TArrow.  Type1 ::= Type2 "->" Type1 ;
+TForAll. Type  ::= "forall" TypePattern "." ScopedType ;
+coercions Type 2 ;
+
+TPatternVar. TypePattern ::= Ident ;
+ScopedType. ScopedType ::= Type1 ;
+  \end{minted}
+  \caption[LBNF grammar of the object language types]{Labelled BNF grammar of the object language types. \texttt{UVarIdent} is a custom lexical type introduced to distinguish unification (free) variables from bound variables, which use the predifined basic type \texttt{Ident}. The \texttt{coercions} is a macro that automatically generates semantic "no-op" coercion rules that define the precedence of the operators.}
+  \label{fig:lbnf-types}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{\todogreen{Code Generation}}
+
+Having defined the language grammar, we are ready to generate the necessary Haskell code using code generation tools mentioned in the Chapter~\ref{chap:lr}. After installing necessary tools, and running shell commands from Figure~\ref{fig:code-gen-cli}, we get:
+
+\begin{enumerate}
+  \item Abstract syntax data types (\texttt{Abs.hs}), pretty-printing (\texttt{Print.hs}), lexer specification (\texttt{Lex.x}), and parser specification (\texttt{Par.y}) generated by BNFC~\cite{BNFC} from the grammar.
+  \item Lexical analyzer (\texttt{Lex.hs}) generated by Alex~\cite{haskell_alex} from the lexer specification.
+  \item Parser (\texttt{Par.hs}) generated by Happy~\cite{haskell_happy} from the parser specification.
+\end{enumerate}
+
+\begin{figure}[H]
+  \begin{minted}[frame=single]{bash}
+bnfc --haskell -d \
+  -p FreeFoilTypecheck.HindleyMilner \
+  --generic \
+  -o src \
+  grammar/Parser.cf
+alex src/FreeFoilTypecheck/HindleyMilner/Parser/Lex.x
+happy src/FreeFoilTypecheck/HindleyMilner/Parser/Par.y
+  \end{minted}
+  \caption{Shell commands for generating type checker front-end.}
+  \label{fig:code-gen-cli}
+\end{figure}
+
+From the abstract syntax generated by BNFC, we now are able to generate the generic and scope-safe version of it via Free Foil.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,7 +128,88 @@ BNF notation,
 
 \section{\todoorange{Inference Algorithm}}
 
-<...TypingContext and its' components...>
+\begin{figure}[H]
+  \begin{minted}[frame=single,fontsize=\small]{haskell}
+type IdentLevelMap = HashMap.HashMap Raw.UVarIdent Int
+
+instance Data.Hashable.Hashable Raw.UVarIdent where
+  hashWithSalt salt (Raw.UVarIdent s) = Data.Hashable.hashWithSalt salt s
+
+newtype Constraint n = Constraint (Type n, Type n)
+type Constraint' = Constraint Foil.VoidS
+
+newtype Subst n = Subst (Map.Map Raw.UVarIdent (Type n))
+type Subst' = Subst Foil.VoidS
+
+newtype TypingEnv n tn = TypingEnv (Foil.NameMap n (Type tn))
+type TypingEnv' n = TypingEnv n Foil.VoidS
+
+class Typed a where
+  applySubst :: (Foil.Distinct n) => Subst n -> a n -> a n
+
+  freeVars :: a n -> Set.Set Raw.UVarIdent
+
+  hasFreeVar :: Raw.UVarIdent -> a n -> Bool
+  hasFreeVar i t = i `Set.member` freeVars t
+
+instance Typed (FreeFoil.AST FoilTypePattern TypeSig) where
+  applySubst (Subst s) t = foldr applySubstToType t (Map.toList s)
+
+  freeVars (TUVar ident) = Set.singleton ident
+  freeVars (FreeFoil.Var _) = Set.empty
+  freeVars (FreeFoil.Node node) = Set.unions $ freeVars <$> node
+
+instance Typed Constraint where
+  applySubst s (Constraint (t1, t2)) = Constraint (applySubst s t1, applySubst s t2)
+
+  freeVars (Constraint (t1, t2)) = Set.union (freeVars t1) (freeVars t2)
+
+instance Typed (TypingEnv n) where
+  applySubst s (TypingEnv env) = TypingEnv (fmap (applySubst s) env)
+  freeVars (TypingEnv env) = Set.unions $ freeVars <$> env
+
+nullSubst :: Subst Foil.VoidS
+nullSubst = Subst Map.empty
+
+singleSubst :: (Foil.Distinct n) => Raw.UVarIdent -> Type n -> Subst n
+singleSubst ident type_ = Subst (Map.singleton ident type_)
+
+composeSubst :: (Foil.Distinct n) => Subst n -> Subst n -> Subst n
+composeSubst (Subst s1) (Subst s2) = Subst (Map.map (applySubst (Subst s2)) s1 `Map.union` s2)
+  \end{minted}
+  \caption{todo}
+  % \label{}
+\end{figure}
+
+...
+
+\begin{figure}[H]
+  \begin{minted}[frame=single,fontsize=\small]{haskell}
+data TypingContext n = TypingContext
+  { tcConstraints :: [Constraint'],
+    tcSubst :: Subst',
+    tcEnv :: TypingEnv' n,
+    tcFreshId :: Int,
+    tcLevelMap :: IdentLevelMap,
+    tcLevel :: Int
+  }
+
+initialTypingContext :: TypingContext Foil.VoidS
+initialTypingContext =
+  TypingContext
+    { tcConstraints = [],
+      tcSubst = Subst Map.empty,
+      tcEnv = TypingEnv Foil.emptyNameMap,
+      tcFreshId = 1,
+      tcLevelMap = HashMap.empty,
+      tcLevel = 1
+    }
+  \end{minted}
+  \caption{todo}
+  % \label{}
+\end{figure}
+
+...
 
 \texttt{inferType} takes an expression and returns monadic operation that performs type inference. More precisely, it takes a value of type \texttt{Exp n} and returns \texttt{TypeInferencer n Type'}, where:
 
@@ -92,7 +270,7 @@ True
 >>> FreeFoil.alphaEquiv Foil.emptyScope e1 e2
 True
   \end{minted}
-  \caption{Examples demonstrating that \texttt{FreeFoil.alphaEquiv} does not distinguish between different variable names or literal values.}
+  \caption[\texttt{FreeFoil.alphaEquiv} usage examples (1)]{Examples demonstrating that \texttt{FreeFoil.alphaEquiv} does not distinguish between different variable names or literal values.}
   \label{fig:freefoil-alphaequiv-literals}
 \end{figure}
 
@@ -106,7 +284,7 @@ True
 >>> FreeFoil.alphaEquiv Foil.emptyScope t1 t3
 False
   \end{minted}
-  \caption{Examples demonstrating that \texttt{FreeFoil.alphaEquiv} considers types with different variable names as equivalent, but is sensitive to the order of nested \texttt{forall}s.}
+  \caption[\texttt{FreeFoil.alphaEquiv} usage examples (2)]{Examples demonstrating that \texttt{FreeFoil.alphaEquiv} considers types with different variable names as equivalent, but is sensitive to the order of nested \texttt{forall}s.}
   \label{fig:freefoil-alphaequiv-foralls}
 \end{figure}
 
