@@ -9,7 +9,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this chapter, we present an implementation of the mentioned type inference algorithm in Haskell. First, we define object language grammar and generate front-end of the type checker. Second, we generate generic abstract syntax with Free Foil. Then, we introduce core data types and explain how algorithm works. Finally, we talk about testing and related difficulties.
+In this chapter, we present an implementation of the mentioned type inference algorithm in Haskell. First, we define object language grammar and generate front-end of the type checker. Second, we generate generic abstract syntax with Free Foil. Then, we introduce necessary data types and explain key steps in the algorithm. Finally, we talk about testing and related difficulties.
 
 \section{\todogreen{Grammar and Front-end}}
 
@@ -241,6 +241,8 @@ How \texttt{inferType} works? It recursively infers a type of a given AST node (
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{\todored{Unification}}
+
+The unification algorithm 
 
 ...
 
