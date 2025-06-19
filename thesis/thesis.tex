@@ -62,7 +62,6 @@
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=black}
 \usepackage{paralist}
 \usepackage{listings}
-\usepackage{minted} % Added for code highlighting
 \usepackage{zed-csp}
 \usepackage{fancyhdr}
 \usepackage{csquotes}
@@ -70,31 +69,6 @@
 % \usepackage{anyfontsize}
 % \usepackage{mathptmx}
 % \usepackage{t1enc}
-
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-\lstdefinestyle{mystyle}{
-  backgroundcolor=\color{backcolour},
-  commentstyle=\color{codegreen},
-  keywordstyle=\color{magenta},
-  numberstyle=\tiny\color{codegray},
-  stringstyle=\color{codepurple},
-  basicstyle=\ttfamily\footnotesize,
-  breakatwhitespace=false,
-  breaklines=true,
-  captionpos=b,
-  keepspaces=true,
-  numbers=left,
-  numbersep=5pt,
-  showspaces=false,
-  showstringspaces=false,
-  showtabs=false,
-  tabsize=2
-}
-\lstset{style=mystyle}
 
 \usepackage{mathpartir}
 \usepackage{chngcntr}
@@ -150,6 +124,10 @@
       {\fancyplain{}{\bf\rightmark}}
 \cfoot{} %bfseries
 
+% Code blocks
+\usepackage{minted}
+\usepackage{etoolbox}
+\AtBeginEnvironment{minted}{\renewcommand{\baselinestretch}{1.25}\normalsize} % make code more compact
 
 \newcommand{\dedication}[1]
    {\thispagestyle{empty}
