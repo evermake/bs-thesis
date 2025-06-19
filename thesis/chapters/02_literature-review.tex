@@ -11,65 +11,63 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\todoorange{Hindley-Milner Type System}}
+\section{\todogreen{Hindley-Milner Type System}}
 
-In 1969, Hindley discovered an approach of computing a principal type scheme for a given object in combinatory logic \cite{Hindley1969_PrincipalTypeScheme}. Later, in 1978, Milner introduced two algorithms for inferring polymorphic type for a given program: algorithm $\mathcal{W}$ and $\mathcal{J}$, and proved soundness of $\mathcal{W}$ \cite{Milner1978_TypePolymorphism}. Finally, in 1984 \cite{Damas1984_TypeAssignment}, Damas proved completeness of $\mathcal{W}$ and that $\mathcal{W}$ indeed infers the principal type of a given term. Mentioned works formed the theoretical basis for the type system khown as Hindley-Milner (HM) type system in the literature. HM's ...
+In 1969, Hindley discovered an approach of computing a principal type scheme for a given object in combinatory logic \cite{Hindley1969_PrincipalTypeScheme}. Later, in 1978, Milner introduced two algorithms for inferring polymorphic type for a given program: algorithm $\mathcal{W}$ and $\mathcal{J}$, and proved soundness of $\mathcal{W}$ \cite{Milner1978_TypePolymorphism}. Finally, in 1984 \cite{Damas1984_TypeAssignment}, Damas proved completeness of $\mathcal{W}$ and that $\mathcal{W}$ indeed infers the principal type of a given term. Mentioned works formed the theoretical basis for the family of type systems, in the literature khown as variations of Hindley-Milner (HM) type system.
 
-Hindley's "principal type scheme" and Milner's "polymorphic type" mean 
+Hindley's "principal type scheme" and Milner's "polymorphic type" are about the same concept — the most general type of a term, from which all other types can be instantiated. For example, the identity function $\lambda x. x$ can be typed as $\texttt{Int} \to \texttt{Int}$, or $\texttt{Bool} \to \texttt{Bool}$, but its most general type is $\forall \alpha. \alpha \to \alpha$.
 
-<... and known in literature as Hindley-Milner (HM) type system ...>
-
-<explain constraints, unification and substitution>
-
-<explain let-polymorphism>
-
-<show typing rules and introduce the efficiency problem of type generalization process>
+HM forms the foundation of modern functional programming languages such as ML, OCaml, and Haskell. It is widely adopted due to its relative simplicity (variant of typing rules is shown on Figure~\ref{fig:syntactical-hm-rules}), formal properties of completeness and soundness, and its support for parametric polymorphism, which enables the inference of principal types for terms without requiring explicit type annotations, making the system both expressive and practical for use.
 
 \begin{figure}[H]
-  \begin{mathpar}
-    \inferrule
-      {\tau = \texttt{newvar} \quad
-      \Gamma, x : \tau \vdash e : \tau'}
-      {\Gamma \vdash \lambda x. e : \tau \to \tau'}
-      \,[\texttt{Abs}]
+  \fbox{\begin{minipage}[c][\height+1.5cm][t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}
+    \begin{mathpar}
+      \inferrule
+        {x : \sigma \in \Gamma \\
+          \sigma \sqsubseteq \tau}
+        {\Gamma \vdash x : \tau}
+        \,[\texttt{Var}]
 
-    \inferrule
-      {\Gamma \vdash e_0 : \tau_0 \quad
-      \Gamma \vdash e_1 : \tau_1 \quad
-      \tau' = \texttt{newvar} \quad
-      \texttt{unify}(\tau_0, \tau_1 \to \tau')}
-      {\Gamma \vdash e_0\,e_1 : \tau'}
-      \,[\texttt{App}]
+      \inferrule
+        {\Gamma \vdash e_0 : \tau \to \tau' \\
+          \Gamma \vdash e_1 : \tau}
+        {\Gamma \vdash e_0\;e_1 : \tau'}
+        \,[\texttt{App}]
 
-    \inferrule
-      {\Gamma \vdash e_0 : \tau \quad
-      \Gamma, x : \overline{\Gamma}(\tau) \vdash e_1 : \tau'}
-      {\Gamma \vdash \texttt{let } x = e_0 \texttt{ in } e_1 : \tau'}
-      \,[\texttt{Let}]
-    
-    \inferrule
-      {x : \sigma \in \Gamma \quad
-      \tau = \texttt{inst}(\sigma)}
-      {\Gamma \vdash x : \tau}
-      \,[\texttt{Var}]
-  \end{mathpar}
-  \caption{Algorithm $\mathcal{J}$ typing rules.}
+      \inferrule
+        {\Gamma, x : \tau \vdash e : \tau'}
+        {\Gamma \vdash \lambda x. e : \tau \to \tau'}
+        \,[\texttt{Abs}]
+
+      \inferrule
+        {\Gamma \vdash e_0 : \tau \\
+        \Gamma, x : \overline{\Gamma}(\tau) \vdash e_1 : \tau'}
+        {\Gamma \vdash \texttt{let } x = e_0 \texttt{ in } e_1 : \tau'}
+        \,[\texttt{Let}]
+    \end{mathpar}
+  \end{minipage}}
+  \caption{Syntactical Hindley-Milner system rules \cite{Clement1986_MiniML}}
+  \label{fig:syntactical-hm-rules}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{mathpar}
-    \overline{\Gamma}(\tau) = \forall \hat{\alpha}.\tau
+  \fbox{\begin{minipage}[c][\height+0.5cm][c]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}
+    \vspace*{-1cm}
+    \begin{mathpar}
+      \overline{\Gamma}(\tau) = \forall \hat{\alpha}.\tau
 
-    \hat{\alpha} = \texttt{free}(\tau) \setminus \texttt{free}(\Gamma)  
-  \end{mathpar}
-  \caption{Generalization of a type $\tau$ under context $\Gamma$.}
+      \hat{\alpha} = \texttt{free}(\tau) \setminus \texttt{free}(\Gamma)  
+    \end{mathpar}
+  \end{minipage}}
+  \caption{Generalization of a type $\tau$ under context $\Gamma$}
+  \label{fig:generalization-def}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\todoorange{Levels}}
+\section{\todogreen{Levels}}
 
 In HM type system, let-polymorphism enables the definition of polymorphic functions through let-expressions. The process involves two primary steps: generalization and specialization (or instantiation). Generalization quantifies free type variables in the monotype of a let-bound expression to form a polytype, while specialization instantiates these quantified variables with fresh ones at each use of the bound variable.
 
@@ -81,11 +79,9 @@ $$
 
 Here, the type of expression bound by $y$ is inferred as $A \to B$, where $B$ and $A$ are the types of $x$ and $z$ accordingly. Generalizing both $A$ and $B$ to form $\forall \alpha. \forall \beta.\ \alpha \to \beta$ would be incorrect, as $\beta$ is bound in the outer context. The correct type for $y$ is $\forall \alpha.\ \alpha \to B$, ensuring that only $\alpha$, introduced within the expression bound by let, is generalized.
 
-Traditional type inference algorithms, such as $\mathcal{W}$~and~$\mathcal{J}$~\cite{Milner1978_TypePolymorphism}, perform generalization by computing the free type variables in the inferred type and subtracting those free in the type environment. This process requires scanning both the type and the entire environment. To address this inefficiency, Didier R\'emy introduced the concept of ranks (or levels) in his work~\cite{Remy1992_SortedEqTheoryTypes}. As pointed out by R\'emy~\cite{Remy1992_SortedEqTheoryTypes}, this inefficiency is not particularly critical in the standard HM, but becomes important when new extensions, such as subtyping, are introduced.
+Traditional type inference algorithms, such as $\mathcal{W}$~and~$\mathcal{J}$~\cite{Milner1978_TypePolymorphism}, perform generalization by computing the free type variables in the inferred type and subtracting those that are free in the type environment (see Figure~\ref{fig:generalization-def}). This process requires scanning both the type and the entire environment. To address this inefficiency, Didier R\'emy introduced the concept of ranks (or levels) in his work~\cite{Remy1992_SortedEqTheoryTypes}. As pointed out by R\'emy, this inefficiency is not particularly critical in the standard HM, but becomes important when new extensions, such as subtyping, are introduced.
 
-Levels are integers representing the nesting depth of let-expressions. Each type variable is associated with a level corresponding to the let-expression in which it was introduced, with level 1 assigned to the implicit top-level let of a program. Level assigned to a unification variable may change after it was introduced. During unification, if a type variable is unified with a type at a lower level, its level is updated to the minimum of the two, ensuring it reflects the outermost scope in which it is used. Finally, when generalizing a let-bound expression at level $n$, only free variables of the type with levels greater than $n$ are quantified. As a result, sound generalization is preserved without "touching" a typing environment at all.
-
-<TODO: demonstrate on example above...>
+Levels are integers representing the nesting depth of let-expressions. Each type variable is associated with a level corresponding to the let-expression in which it was introduced, with level 1 assigned to the implicit top-level let of a program. Level assigned to a unification variable may change after it was introduced. During unification, if a type variable is unified with a type at a lower level, its level is updated to the minimum of the two, ensuring it reflects the outermost scope in which it is used~\cite{Kiselyov2022_OCamplTypeChecker}. Finally, when generalizing a let-bound expression at level $n$, only free variables of the type with levels greater than $n$ are quantified. As a result, sound generalization is preserved without "touching" a typing environment at all.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,7 +111,7 @@ We got an identity function, which is wrong, since $y$ in the body of $\lambda$-
 
 Capture-avoiding substitution is an old and well-studied problem in computer science, with extensive research done as well as numerous practical implementations applied in real-world projects.
 
-De~Bruijn indices~\cite{deBruijn1972} is one of the earliest and simplest approaches to capture-avoiding substitution, which suggests to replace bound names with natural numbers representing the position relative to their binder. However, such nameless representation is not efficient in practice due to often shifts and expressions traversal. In recent decades, more efficient approaches to capture-avoiding substitution have emerged. One notable example is the stateless "rapier" technique~\cite{Simon2002_SecretsGHC}, which is used by the Glasgow Haskell Compiler and has proven to be highly performant. <TODO: Maybe reference to some benchmark?>
+De~Bruijn indices~\cite{deBruijn1972} is one of the earliest and simplest approaches to capture-avoiding substitution, which suggests to replace bound names with natural numbers representing the position relative to their binder. However, such nameless representation is not efficient in practice due to often shifts and expressions traversal. In recent decades, more efficient approaches to capture-avoiding substitution have emerged. One notable example is the stateless "rapier" technique~\cite{Simon2002_SecretsGHC}, which is used by the Glasgow Haskell Compiler.
 
 However, besides efficency, it is worth considering another two important aspects when choosing between different name management techniques, which are intrinsic scoping and generality.
 
@@ -143,7 +139,7 @@ Free Foil introduced by Kudasov \textit{et al.} \cite{FreeFoil}, is a framework 
 
 ...
 
-Scope-safe generic abstract syntax can be generated with Free Foil in two ways: by using free scoped monads or via Template Haskell \cite{SheardPeytonJones2002_TH} GHC extension, i.e. metaprogramming. In this work we have chosen the second approach, as it requires writing less code and, more importantly, integrates nicely with BNFC.
+Scope-safe generic abstract syntax can be generated with Free Foil in two ways: by using free scoped monads or via Template Haskell \cite{SheardPeytonJones2002_TH} GHC extension (i.e. metaprogramming). In this work we have chosen the second approach, as it requires writing less code and, more importantly, integrates nicely with BNFC.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

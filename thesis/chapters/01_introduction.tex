@@ -17,12 +17,12 @@ Definitely, numerous implementations of the Hindley-Milner type system can be fo
 
 ...
 
-First, in our implementation we use
+First, our implementation is built upon the recently introduced Free Foil framework~\cite{FreeFoil} that allows generating efficient, scope-safe, and generic abstract syntax from a language signature.
 
 ...
 
-Second, we use an old but not widely adopted idea of levels (or ranks) to implement more efficient type generalization than that which is used in algorithm $\mathcal{W}$ and similar ones. 
+Second, we use an old but not widely adopted idea of levels (or ranks) to implement more efficient type generalization, which does not require scanning type environment
 
 ...
 
-In this work, we present an implementation of a Hindley-Milner-style type inference algorithm with generalization via levels in Haskell, which is based on scope-safe abstract syntax generated with Free Foil framework, for a language similar to lambda calculus. Source code of this work, and related works of my colleagues is avilable at \href{https://github.com/evermake/free-foil-typecheck}{github.com/evermake/free-foil-typecheck}.
+We present an implementation of a Hindley-Milner-style type inference algorithm in Haskell with generalization via levels, which is based on scope-safe abstract syntax generated with Free Foil framework, for a language similar to lambda calculus. Source code of this work, and related works of my colleagues is avilable at \href{https://github.com/evermake/free-foil-typecheck}{github.com/evermake/free-foil-typecheck}.
