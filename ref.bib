@@ -5,8 +5,8 @@
   journal   = {Transactions of the American Mathematical Society},
   pages     = {29--60},
   publisher = {American Mathematical Society},
+  doi       = {10.2307/1995158},
   title     = {The Principal Type-Scheme of an Object in Combinatory Logic},
-  urldate   = {2024-12-04},
   volume    = {146},
   year      = {1969}
 }
@@ -44,6 +44,7 @@
 @article{Damas1984_TypeAssignment,
   title     = {Type assignment in programming languages},
   author    = {Damas, Luis},
+  journal   = {KB thesis scanning project 2015},
   year      = {1984},
   publisher = {The University of Edinburgh}
 }
@@ -55,7 +56,6 @@
   isbn      = {0897912004},
   publisher = {Association for Computing Machinery},
   address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/319838.319847},
   doi       = {10.1145/319838.319847},
   booktitle = {Proceedings of the 1986 ACM Conference on LISP and Functional Programming},
   pages     = {13–27},
@@ -68,19 +68,15 @@
   title       = {{Extension of ML type system with a sorted equation theory on types}},
   author      = {R{\'e}my, Didier},
   url         = {https://inria.hal.science/inria-00077006},
-  note        = {Projet FORMEL},
   type        = {Research Report},
   number      = {RR-1766},
   institution = {{INRIA}},
-  year        = {1992},
-  pdf         = {https://inria.hal.science/inria-00077006v1/file/RR-1766.pdf},
-  hal_id      = {inria-00077006},
-  hal_version = {v1}
+  year        = {1992}
 }
 
 @misc{Kiselyov2022_OCamplTypeChecker,
   author = {Oleg Kiselyov},
-  title  = {How OCaml type checker works -- or what polymorphism and garbage collection have in common},
+  title  = {{How OCaml type checker works — or what polymorphism and garbage collection have in common}},
   url    = {https://okmij.org/ftp/ML/generalization.html},
   year   = {2022},
   month  = {01},
@@ -104,31 +100,30 @@
 }
 
 @article{Simon2002_SecretsGHC,
-  author   = {Peyton Jones, Simon and Marlow, Simon},
-  title    = {Secrets of the Glasgow Haskell Compiler inliner},
-  year     = {2002},
-  month    = {July},
-  abstract = {Higher-order languages, such as Haskell, encourage the programmer to build abstractions by composing functions. A good compiler must inline many of these calls to recover an efficiently executable program.
-              
-              In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat.
-              
-              The purpose of this paper is, therefore, to articulate the key lessons we learned from a full-scale ``production'' inliner, the one used in the Glasgow Haskell compiler. We focus mainly on the algorithmic aspects, but we also provide some indicative measurements to substantiate the importance of various aspects of the inliner.
-              
-              The "Related File" link above is an earlier tech-report version of the paper, but the JFP version is the one to read (the "View publication" button).},
-  url      = {https://www.microsoft.com/en-us/research/publication/secrets-of-the-glasgow-haskell-compiler-inliner/},
-  pages    = {393-434},
-  journal  = {Journal of Functional Programming},
-  volume   = {12}
+  author  = {Peyton Jones, Simon and Marlow, Simon},
+  title   = {Secrets of the Glasgow Haskell Compiler inliner},
+  year    = {2002},
+  month   = {7},
+  url     = {https://www.microsoft.com/en-us/research/publication/secrets-of-the-glasgow-haskell-compiler-inliner/},
+  pages   = {393-434},
+  journal = {Journal of Functional Programming},
+  volume  = {12}
 }
 
-@misc{Foil,
-  title         = {The Foil: Capture-Avoiding Substitution With No Sharp Edges},
-  author        = {Dougal Maclaurin and Alexey Radul and Adam Paszke},
-  year          = {2022},
-  eprint        = {2210.04729},
-  archiveprefix = {arXiv},
-  primaryclass  = {cs.PL},
-  url           = {https://arxiv.org/abs/2210.04729}
+@inproceedings{Foil,
+  author    = {Maclaurin, Dougal and Radul, Alexey and Paszke, Adam},
+  title     = {The Foil: Capture-Avoiding Substitution With No Sharp Edges},
+  year      = {2023},
+  isbn      = {9781450398312},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  doi       = {10.1145/3587216.3587224},
+  abstract  = {Correctly manipulating program terms in a compiler is surprisingly difficult because of the need to avoid name capture. The rapier from Peyton&nbsp;Jones and Marlow [9] is a cutting-edge technique for fast, stateless capture-avoiding substitution for expressions represented with explicit names. It is, however, a sharp tool—its invariants are tricky and need to be maintained throughout the whole compiler that uses it. We describe the foil, an elaboration of the rapier that uses Haskell’s type system to enforce the rapier’s invariants statically, preventing a class of hard-to-find bugs, but without adding any run-time overheads.},
+  booktitle = {Proceedings of the 34th Symposium on Implementation and Application of Functional Languages},
+  articleno = {8},
+  numpages  = {10},
+  location  = {Copenhagen, Denmark},
+  series    = {IFL '22}
 }
 
 @inproceedings{FreeFoil,
@@ -145,12 +140,11 @@
 
 @inproceedings{BNFC,
   author    = {Forsberg, Markus and Ranta, Aarne},
-  title     = {BNF converter},
+  title     = {{BNF converter}},
   year      = {2004},
   isbn      = {1581138504},
   publisher = {Association for Computing Machinery},
   address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/1017472.1017475},
   doi       = {10.1145/1017472.1017475},
   abstract  = {We will demonstrate BNFC (the BNF Converter) [7, 6], a multi-lingual compiler tool. BNFC takes as its input a grammar written in LBNF (Labelled BNF) notation, and generates a compiler front-end (an abstract syntax, a lexer, and a parser). Furthermore, it generates a case skeleton usable as the starting point of back-end construction, a pretty printer, a test bench, and a LaTeX document usable as language specification. The program components can be generated in Haskell, Java, C and C++ and their standard parser and lexer tools. BNFC itself was written in Haskell.The methodology used for the generated front-end is based on Appel's books on compiler construction [3, 1, 2]. BNFC has been used as a teaching tool in compiler construction courses at Chalmers. It has also been applied to research-related programming language development, and in an industrial application producing a compiler for a telecommunications protocol description language [4].BNFC is freely available under the GPL license at its website and in the testing distribution of Debian Linux.},
   booktitle = {Proceedings of the 2004 ACM SIGPLAN Workshop on Haskell},
@@ -162,20 +156,13 @@
 }
 
 @inproceedings{SheardPeytonJones2002_TH,
-  author    = {Tim Sheard and
-               Simon Peyton Jones},
-  editor    = {Manuel M. T. Chakravarty},
   title     = {Template meta-programming for Haskell},
-  booktitle = {Proceedings of the 2002 {ACM} {SIGPLAN} Workshop on Haskell, Haskell
-               2002, Pittsburgh, Pennsylvania, USA, October 3, 2002},
-  pages     = {1--16},
+  author    = {Sheard, Tim and Jones, Simon Peyton},
+  booktitle = {Proceedings of the 2002 ACM SIGPLAN workshop on Haskell},
   publisher = {{ACM}},
-  year      = {2002},
-  url       = {https://doi.org/10.1145/581690.581691},
   doi       = {10.1145/581690.581691},
-  timestamp = {Fri, 03 Jun 2022 10:47:01 +0200},
-  biburl    = {https://dblp.org/rec/conf/haskell/SheardJ02.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+  pages     = {1--16},
+  year      = {2002}
 }
 
 @incollection{BackusNaurForm2003,
@@ -200,18 +187,16 @@
   howpublished = {\url{https://github.com/haskell/alex}}
 }
 
-@article{deBruijn1972,
-  title    = {Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church-Rosser theorem},
-  journal  = {Indagationes Mathematicae (Proceedings)},
-  volume   = {75},
-  number   = {5},
-  pages    = {381-392},
-  year     = {1972},
-  issn     = {1385-7258},
-  doi      = {https://doi.org/10.1016/1385-7258(72)90034-0},
-  url      = {https://www.sciencedirect.com/science/article/pii/1385725872900340},
-  author   = {N.G {de Bruijn}},
-  abstract = {In ordinary lambda calculus the occurrences of a bound variable are made recognizable by the use of one and the same (otherwise irrelevant) name at all occurrences. This convention is known to cause considerable trouble in cases of substitution. In the present paper a different notational system is developed, where occurrences of variables are indicated by integers giving the “distance” to the binding λ instead of a name attached to that λ. The system is claimed to be efficient for automatic formula manipulation as well as for metalingual discussion. As an example the most essential part of a proof of the Church-Rosser theorem is presented in this namefree calculus.}
+@inproceedings{deBruijn1972,
+  title        = {{Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church-Rosser theorem}},
+  author       = {De Bruijn, Nicolaas Govert},
+  booktitle    = {Indagationes mathematicae (proceedings)},
+  volume       = {75},
+  number       = {5},
+  pages        = {381--392},
+  year         = {1972},
+  organization = {Elsevier},
+  doi          = {https://doi.org/10.1016/1385-7258(72)90034-0}
 }
 
 @article{BirdPaterson1999_BruijnNested,
@@ -243,10 +228,25 @@
   journal = {Proceedings of the ACM on Programming Languages},
   month   = aug,
   title   = {{Getting to the Point: Index Sets and Parallelism-Preserving Autodiff for Pointful Array Programming}},
-  url     = {https://doi.org/10.1145/3473593},
   volume  = {5},
   year    = {2021}
 }
+
+@inproceedings{Traytel2011_HMCoerciveSubtyping,
+  author    = {Traytel, Dmitriy
+               and Berghofer, Stefan
+               and Nipkow, Tobias},
+  editor    = {Yang, Hongseok},
+  title     = {Extending Hindley-Milner Type Inference with Coercive Structural Subtyping},
+  booktitle = {Programming Languages and Systems},
+  year      = {2011},
+  publisher = {Springer Berlin Heidelberg},
+  address   = {Berlin, Heidelberg},
+  pages     = {89--104},
+  abstract  = {We investigate how to add coercive structural subtyping to a type system for simply-typed lambda calculus with Hindley-Milner polymorphism. Coercions allow to convert between different types, and their automatic insertion can greatly increase readability of terms. We present a type inference algorithm that, given a term without type information, computes a type assignment and determines at which positions in the term coercions have to be inserted to make it type-correct according to the standard Hindley-Milner system (without any subtypes). The algorithm is sound and, if the subtype relation on base types is a disjoint union of lattices, also complete. The algorithm has been implemented in the proof assistant Isabelle.},
+  isbn      = {978-3-642-25318-8}
+}
+
 
 @article{Robinson1965,
   author     = {Robinson, J. A.},
@@ -258,7 +258,6 @@
   volume     = {12},
   number     = {1},
   issn       = {0004-5411},
-  url        = {https://doi.org/10.1145/321250.321253},
   doi        = {10.1145/321250.321253},
   journal    = {J. ACM},
   month      = jan,
@@ -277,6 +276,24 @@
   version   = {v0.2.0},
   doi       = {10.5281/zenodo.13997857},
   url       = {https://doi.org/10.5281/zenodo.13997857}
+}
+
+@article{lee1998proofs,
+  title     = {Proofs about a folklore let-polymorphic type inference algorithm},
+  author    = {Lee, Oukseh and Yi, Kwangkeun},
+  journal   = {ACM Transactions on Programming Languages and Systems (TOPLAS)},
+  volume    = {20},
+  number    = {4},
+  pages     = {707--723},
+  year      = {1998},
+  publisher = {ACM New York, NY, USA}
+}
+
+@article{Heeren2002_GeneralizingHM,
+  title     = {Generalizing Hindley-Milner type inference algorithms},
+  author    = {Heeren, BJ and Hage, Jurriaan and Swierstra, S Doaitse and others},
+  year      = {2002},
+  publisher = {Utrecht University: Information and Computing Sciences}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -737,23 +754,6 @@
   year      = {1998}
 }
 
-@inproceedings{MaclaurinRadulPaszke2023,
-  author    = {Maclaurin, Dougal and Radul, Alexey and Paszke, Adam},
-  title     = {The Foil: Capture-Avoiding Substitution With No Sharp Edges},
-  year      = {2023},
-  isbn      = {9781450398312},
-  publisher = {Association for Computing Machinery},
-  address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/3587216.3587224},
-  doi       = {10.1145/3587216.3587224},
-  abstract  = {Correctly manipulating program terms in a compiler is surprisingly difficult because of the need to avoid name capture. The rapier from Peyton&nbsp;Jones and Marlow [9] is a cutting-edge technique for fast, stateless capture-avoiding substitution for expressions represented with explicit names. It is, however, a sharp tool—its invariants are tricky and need to be maintained throughout the whole compiler that uses it. We describe the foil, an elaboration of the rapier that uses Haskell’s type system to enforce the rapier’s invariants statically, preventing a class of hard-to-find bugs, but without adding any run-time overheads.},
-  booktitle = {Proceedings of the 34th Symposium on Implementation and Application of Functional Languages},
-  articleno = {8},
-  numpages  = {10},
-  location  = {Copenhagen, Denmark},
-  series    = {IFL '22}
-}
-
 @misc{Kudasov2022_arXiv_free_scoped,
   title           = {{Functional Pearl: Dependent type inference via free higher-order unification}},
   author          = {Nikolai Kudasov},
@@ -938,13 +938,6 @@
   title        = {Hypertypes - generic programming for heterogeneous recursive types},
   year         = {2024},
   howpublished = {\url{https://github.com/lamdu/hypertypes}}
-}
-
-@article{Heeren2002GeneralizingHindleyMilner,
-  title     = {Generalizing Hindley-Milner type inference algorithms},
-  author    = {Heeren, BJ and Hage, Jurriaan and Swierstra, S Doaitse and others},
-  year      = {2002},
-  publisher = {Utrecht University: Information and Computing Sciences}
 }
 
 @inproceedings{AbelPientka2011,
