@@ -1,0 +1,112 @@
+\chapter{\texttt{TypeInferencer} Utilities}
+\label{chap:appendix}
+
+This appendix lists utility functions for the \texttt{TypeInferencer} monad with their implementation.
+
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+get :: TypeInferencer n (TypingContext n)
+get = TypeInferencer $ \ctx -> Right (ctx, ctx)
+
+gets :: (TypingContext n -> a) -> TypeInferencer n a
+gets f = TypeInferencer $ \ctx -> Right (f ctx, ctx)
+
+put :: TypingContext n -> TypeInferencer n ()
+put newCtx = TypeInferencer $ \_old -> Right ((), newCtx)
+
+fromEither :: Either String a -> TypeInferencer n a
+fromEither (Left err) = TypeInferencer $ \_ctx -> Left err
+fromEither (Right x) = TypeInferencer $ \ctx -> Right (x, ctx)
+\end{minted}
+\newpage
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+enterScope
+  :: Foil.NameBinder n l
+  -> Type'
+  -> TypeInferencer l a
+  -> TypeInferencer n a
+enterScope binder type_ action = do
+  ctx <- get
+  let (TypingEnv nameMap) = tcEnv ctx
+  let ctx' = ctx
+    { tcEnv = TypingEnv (Foil.addNameBinder binder type_ nameMap) }
+  (x, ctx'') <- fromEither $ runTI action ctx'
+  let (TypingEnv nameMap'') = tcEnv ctx''
+  put ctx'' { tcEnv = TypingEnv (popNameBinder binder nameMap'') }
+  return x
+
+enterLevel :: TypeInferencer n a -> TypeInferencer n a
+enterLevel action = do
+  ctx <- get
+  let ctx' = ctx {tcLevel = tcLevel ctx + 1}
+  (x, ctx'') <- fromEither $ runTI action ctx'
+  put ctx'' {tcLevel = tcLevel ctx'' - 1}
+  return x
+
+addConstraints :: [(Type', Type')] -> TypeInferencer n ()
+addConstraints constrs = do
+  ctx <- get
+  put ctx {tcConstraints = (Constraint <$> constrs) ++ tcConstraints ctx}
+\end{minted}
+\newpage
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+freshUVar :: TypeInferencer n (Type', Raw.UVarIdent)
+freshUVar = do
+  ctx <- get
+  let freshId = tcFreshId ctx
+  let level = tcLevel ctx
+  let levelsMap = tcLevelMap ctx
+  let newIdent = makeIdent freshId
+  put ctx
+    { tcFreshId = freshId + 1
+    , tcLevelMap = HashMap.insert newIdent level levelsMap
+    }
+  return (TUVar newIdent, newIdent)
+
+freshUVar_ :: TypeInferencer n Type'
+freshUVar_ = do
+  (x, _ident) <- freshUVar
+  return x
+
+specialize :: Type' -> TypeInferencer n (Type', [Raw.UVarIdent])
+specialize = \case
+  TForAll (FoilTPatternVar binder) type_ -> do
+    (x, ident) <- freshUVar
+    let subst = Foil.addSubst Foil.identitySubst binder x
+    (type', idents) <- specialize $
+      FreeFoil.substitute Foil.emptyScope subst type_
+    return (type', ident : idents)
+  type_ -> return (type_, [])
+
+specialize_ :: Type' -> TypeInferencer n Type'
+specialize_ t = do
+  (t', _idents) <- specialize t
+  return t'
+\end{minted}
+\newpage
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+generalize :: Type' -> TypeInferencer n Type'
+generalize type_ = do
+  ctx <- get
+  let identsToQuantify = filter
+        ( \ident -> case HashMap.lookup ident (tcLevelMap ctx) of
+          Nothing -> error $ "variable level is not found"
+          Just l -> l > tcLevel ctx
+        )
+        (Set.toList (freeVars type_))
+  return $ generalizeWithIdents identsToQuantify type_
+
+unify :: TypeInferencer n ()
+unify = do
+  ctx <- get
+  (subst', levelsMap') <- fromEither $
+    unifyConstraintsWithSubst
+      (tcLevelMap ctx) (tcConstraints ctx) (tcSubst ctx)
+  let env' = applySubst subst' (tcEnv ctx)
+  put
+    ctx
+      { tcConstraints = [],
+        tcSubst = subst',
+        tcLevelMap = levelsMap',
+        tcEnv = env'
+      }
+\end{minted}

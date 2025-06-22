@@ -1,9 +1,8 @@
-\chapter{\todored{Conclusion}}
+\chapter{Conclusion}
 \label{chap:conclusion}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% - короткая глава
-% - повторение основных рез-ов работы (должно быть согласовано с Introduction)
-% - вкратце повтоярем, что удалось добиться и вкратце Future Work
-% - можно упомянуть нашу работу (точнее план работ) с WITS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This work demonstrates that modern functional programming and code generation tools can be combined to build an extensible, scope-safe Hindley-Milner type-checker. Using BNFC, Free Foil, and Haskell, we developed a prototype with level-based generalization as a proof of concept.
+
+Our main contributions are the following. First, we presented an algorithm for Hindley-Milner type inference with level-based generalization that separates constraint generation from solving — algorithm $\mathcal{L}$. Second, we implemented the algorithm in Haskell using generic, scope-safe abstract syntax generated through Free~Foil. Third, we developed a test-suite and validated our implementation against it, which, to some extent, empirically verifies the correctness of the algorithm. Finally, we have proposed practical next steps for evolving the prototype into a reusable type inference library.
+
+The contributions of this work have also been presented as part of a talk at WITS'25\footnote{\textit{Towards Generic Type Checking Implementations in Haskell via Second-Order Abstract Syntax}, Workshop on the Implementation of Type Systems, \url{https://popl25.sigplan.org/details/wits-2025-papers/6/Towards-Generic-Type-Checking-Implementations-in-Haskell-via-Second-Order-Abstract-Sy}}.

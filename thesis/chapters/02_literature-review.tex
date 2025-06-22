@@ -1,26 +1,16 @@
-\chapter{\todoorange{Literature Review}}
+\chapter{Literature Review}
 \label{chap:lr}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% - Identify groups of related work (e.g. variations of an algorithm, implementations, theoretical results, etc.)
-% - This section may include papers (published research, pre-prints), existing libraries, software, blog posts, etc.
-% - You should not copy-paste abstract of a reviewed paper. Instead, you must read it carefully and identify the key points of this work that relate to your thesis.
-% - To cover:
-%   - системы типов и HM
-%   - раздел про free-foil с описанием (главное: про что он и как им пользоваться)
+\section{Hindley-Milner Type System}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{\todogreen{Hindley-Milner Type System}}
-
-In 1969, Hindley discovered an approach of computing a principal type scheme for a given object in combinatory logic \cite{Hindley1969_PrincipalTypeScheme}. Later, in 1978, Milner introduced two algorithms for inferring polymorphic type for a given program: algorithm $\mathcal{W}$ and $\mathcal{J}$, and proved soundness of $\mathcal{W}$ \cite{Milner1978_TypePolymorphism}. Finally, in 1984 \cite{Damas1984_TypeAssignment}, Damas proved completeness of $\mathcal{W}$ and that $\mathcal{W}$ indeed infers the principal type of a given term. Mentioned works formed the theoretical basis for the family of type systems, in the literature khown as variations of Hindley-Milner (HM) type system.
+In 1969, Hindley discovered an approach of computing a principal type scheme for a given object in combinatory logic \cite{Hindley1969_PrincipalTypeScheme}. Later, in 1978, Milner introduced two algorithms for inferring polymorphic type for a given program: algorithm $\mathcal{W}$ and $\mathcal{J}$\cite{Milner1978_TypePolymorphism}. Finally, in 1984 \cite{Damas1984_TypeAssignment}, Damas proved completeness of $\mathcal{W}$ and showed that $\mathcal{W}$ indeed infers the principal type of a given term. Mentioned works formed the theoretical basis for the family of type systems, in the literature khown as variations of Hindley-Milner (HM) type system.
 
 Hindley's "principal type scheme" and Milner's "polymorphic type" are about the same concept — the most general type of a term, from which all other types can be instantiated. For example, the identity function $\lambda x. x$ can be typed as $\texttt{Int} \to \texttt{Int}$, or $\texttt{Bool} \to \texttt{Bool}$, but its most general type is $\forall \alpha. \alpha \to \alpha$.
 
 HM forms the foundation of modern functional programming languages such as ML, OCaml, and Haskell. It is widely adopted due to its relative simplicity (variant of typing rules is shown on Figure~\ref{fig:syntactical-hm-rules}), formal properties of completeness and soundness, and its support for parametric polymorphism, which enables the inference of principal types for terms without requiring explicit type annotations, making the system both expressive and practical for use.
 
 \begin{figure}[H]
-  \fbox{\begin{minipage}[c][\height+1.5cm][t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}
+  \fbox{\begin{minipage}[c][\height+1.5cm][t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}%
     \begin{mathpar}
       \inferrule
         {x : \sigma \in \Gamma \\
@@ -46,7 +36,7 @@ HM forms the foundation of modern functional programming languages such as ML, O
         \,[\texttt{Let}]
     \end{mathpar}
   \end{minipage}}
-  \caption{Syntactical Hindley-Milner system rules \cite{Clement1986_MiniML}}
+  \caption[Syntactical Hindley-Milner system rules]{Syntactical Hindley-Milner system rules \cite{Clement1986_MiniML}}
   \label{fig:syntactical-hm-rules}
 \end{figure}
 
@@ -63,13 +53,19 @@ HM forms the foundation of modern functional programming languages such as ML, O
   \label{fig:generalization-def}
 \end{figure}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Over the years, the Hindley-Milner type system has been extensively studied and expanded, therefore, numerous variations of type inference algorithms, and extensions have been discovered. Notable examples include:
 
-\section{\todogreen{Levels}}
+\begin{itemize}
+  \item Algorithm $\mathcal{M}$, which, in contrast to $\mathcal{W}$, is top-down and context-sensitive, although, its soundness and completeness have been proved as well (Lee and Yi, 1998~\cite{lee1998proofs});
+  \item Generalized version of $\mathcal{W}$ and $\mathcal{M}$ with deferred constraint solving, which focuses on flexibility and better error messages (Heeren \textit{et~al.}, 2002~\cite{Heeren2002_GeneralizingHM});
+  \item Algorithm that extends HM with coercive structural subtyping (Traytel \textit{et~al.}, 2011~\cite{Traytel2011_HMCoerciveSubtyping}).
+\end{itemize}
 
-In HM type system, let-polymorphism enables the definition of polymorphic functions through let-expressions. The process involves two primary steps: generalization and specialization (or instantiation). Generalization quantifies free type variables in the monotype of a let-bound expression to form a polytype, while specialization instantiates these quantified variables with fresh ones at each use of the bound variable.
+In this work, we focus on classical HM without extensions. Nevertheless, there are many variations of algorithms for classical HM. In particular, we have found the algorithm proposed by Heeren \textit{et~al.}~\cite{Heeren2002_GeneralizingHM} to be well-aligned with the goals of this project, as it prioritizes generality and flexibility. However, adopting level-based generalization in the context of the mentioned algorithm requires further investigation and is left for future work.
+
+\section{Levels}
+
+In HM type system, let-polymorphism enables the definition of polymorphic functions through let-expressions. The process involves two primary steps: generalization and specialization (or instantiation). Generalization quantifies free type variables in a monotype bound to let to form a polytype, while specialization instantiates the quantified variables with fresh ones at each use of the bound variable.
 
 However, generalizing type variables introduced outside the let binding can lead to unsound type checking. Consider the expression:
 
@@ -79,26 +75,23 @@ $$
 
 Here, the type of expression bound by $y$ is inferred as $A \to B$, where $B$ and $A$ are the types of $x$ and $z$ accordingly. Generalizing both $A$ and $B$ to form $\forall \alpha. \forall \beta.\ \alpha \to \beta$ would be incorrect, as $\beta$ is bound in the outer context. The correct type for $y$ is $\forall \alpha.\ \alpha \to B$, ensuring that only $\alpha$, introduced within the expression bound by let, is generalized.
 
-Traditional type inference algorithms, such as $\mathcal{W}$~and~$\mathcal{J}$~\cite{Milner1978_TypePolymorphism}, perform generalization by computing the free type variables in the inferred type and subtracting those that are free in the type environment (see Figure~\ref{fig:generalization-def}). This process requires scanning both the type and the entire environment. To address this inefficiency, Didier R\'emy introduced the concept of ranks (or levels) in his work~\cite{Remy1992_SortedEqTheoryTypes}. As pointed out by R\'emy, this inefficiency is not particularly critical in the standard HM, but becomes important when new extensions, such as subtyping, are introduced.
+Traditional type inference algorithms, such as $\mathcal{W}$~and~$\mathcal{J}$~\cite{Milner1978_TypePolymorphism}, perform generalization by computing a set of free type variables in the inferred type, and subtracting those that are free in the type environment (see Figure~\ref{fig:generalization-def}). This process requires scanning both the type and the entire environment. To address this inefficiency, Didier R\'emy introduced the concept of ranks (or levels) in his work~\cite{Remy1992_SortedEqTheoryTypes}. As pointed out by R\'emy, this inefficiency is not particularly critical in the standard HM, but becomes important when new extensions, such as subtyping, are introduced. For example, usage of levels is also found in languages with advanced type system features, such as OCaml~\cite{Kiselyov2022_OCamplTypeChecker} and GHC\cite{Simon2002_SecretsGHC}. Although levels can serve a variety of purposes (as they do in the mentioned programming languages), in context of this work, we focus on level-based type generalization only.
 
 Levels are integers representing the nesting depth of let-expressions. Each type variable is associated with a level corresponding to the let-expression in which it was introduced, with level 1 assigned to the implicit top-level let of a program. Level assigned to a unification variable may change after it was introduced. During unification, if a type variable is unified with a type at a lower level, its level is updated to the minimum of the two, ensuring it reflects the outermost scope in which it is used~\cite{Kiselyov2022_OCamplTypeChecker}. Finally, when generalizing a let-bound expression at level $n$, only free variables of the type with levels greater than $n$ are quantified. As a result, sound generalization is preserved without "touching" a typing environment at all.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Binders and Syntax Representations}
 
-\section{\todogreen{Name Management}}
-
-An integral feature of any programming language or formal system is an ability to work with bound names (or local variables), e.g. a parameter of a $\lambda$-abstraction. In the example below, $x$ is said to be \textit{bound} by a \textit{binder} $\lambda x.$, and $y$ is said to be \textit{free} as it does not have a binder:
+An integral feature of any programming language or formal system is an ability to work with bound names (or local variables), e.g. a parameter of a $\lambda$-abstraction. In the example below, $x$ is said to be \textit{bound} by a \textit{binder} $\lambda x$, and $y$ is said to be \textit{free} as it does not have a binder:
 
 $$
 \lambda x." "x" "y
 $$
 
-The main pain point of name management is scoping, that is keeping track of which names are bound by which binders in order to resolve names correctly avoiding collisions. The common operation of name management is substitution, that is, replacing the occurances of a variable with another expression. We may want to replace the occurances of the variable bound by $\lambda$-abstraction, in order to reduce the expression. Or, during type inference, when specializing a polymorphic type in let expression, it is necessary to substitute quantified type variables with the fresh ones. Both these tasks, as well as many others, require a substitution. However, implementing a substitution is not trivial at all.
+The main pain point of name management is scoping, which is keeping track of what names are bound by what binders to resolve names correctly, avoiding collisions. The common operation of name management is a substitution, that is, replacing the occurrences of a variable with another expression. We may want to replace the occurrences of the variable bound by a $\lambda$-abstraction to reduce the expression. Or, during type inference, when specializing a polymorphic type in let expression, it is necessary to substitute quantified type variables with fresh ones. Both these tasks, as well as many others, require a substitution. However, implementing a substitution is not trivial at all.
 
 To illustrate why substitution is not an easy task, consider the process of reduction of this $\lambda$-expression:
 
+\vspace{-1cm}
 \begin{align*}
   & (\lambda x. \lambda y. x) y \\
   & \rightarrow \text{($\beta$-reduction)} \\
@@ -111,70 +104,131 @@ We got an identity function, which is wrong, since $y$ in the body of $\lambda$-
 
 Capture-avoiding substitution is an old and well-studied problem in computer science, with extensive research done as well as numerous practical implementations applied in real-world projects.
 
-De~Bruijn indices~\cite{deBruijn1972} is one of the earliest and simplest approaches to capture-avoiding substitution, which suggests to replace bound names with natural numbers representing the position relative to their binder. However, such nameless representation is not efficient in practice due to often shifts and expressions traversal. In recent decades, more efficient approaches to capture-avoiding substitution have emerged. One notable example is the stateless "rapier" technique~\cite{Simon2002_SecretsGHC}, which is used by the Glasgow Haskell Compiler.
+Usage of de~Bruijn indices~\cite{deBruijn1972} is one of the earliest and simplest approaches to capture-avoiding substitution, which suggests replacing bound names with natural numbers representing the position relative to their binder. However, such nameless representation is not efficient in practice due to often shifts and expressions traversal. In recent decades, more efficient approaches to capture-avoiding substitution have emerged. One notable example is a stateless "rapier" technique~\cite{Simon2002_SecretsGHC} used by the Glasgow Haskell Compiler.
 
-However, besides efficency, it is worth considering another two important aspects when choosing between different name management techniques, which are intrinsic scoping and generality.
+Choosing the right name management technique is closely related to choosing the underlying representation of language terms.
 
-\section{\todoorange{Intrinsic Scoping}}
+\subsection{Basic Abstract Syntax}
 
-Intrinsically scoped, or scope-safe, abstract syntax representation of the language terms helps to minimize a chance of introducing bugs, by leveraging the power of the host language type system. For example, in 1999 Bird and Paterson \cite{BirdPaterson1999_BruijnNested} showed how invariants of the de Bruijn notation can be described on the type level by using nested datatypes \cite{Bird1998_NestedDatatypes}. Dex programming language~\cite{PaszkeDex_2021} is another illustrative example why using scope-safe abstract syntax is beneficial. When adopting the mentioned "rapier" technique in Dex, Google research team faced many difficulties, which led them to develop the foil~\cite{Foil} — an enhancement that leverages the Haskell's type system to maintain rapier's invariants.
+While the simple representation of language syntax is easy to understand and implement, it comes with two drawbacks. First, it easy to introduce bugs in functions that operate on terms, as variable capture can occur if renaming and substitution are not handled carefully. Second, adding new expression forms or operations would require modifying the original data type and all related functions, illustrating the Expression Problem\footnote{Philip Wadler, \url{https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt}}.
 
-<TODO: explain how scope-safety is achieved in foil>
+\begin{figure}[H]
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+data Term
+  = Var String
+  | App Term Term
+  | Abs String Term
+\end{minted}
+  \caption{Lambda terms as basic ADT}
+\end{figure}
 
-\section{\todoorange{Generic Abstract Syntax}}
+\subsection{Intrinsic Scoping}
 
-Generality is another possible characteristic of the abstract syntax, which helps to avoid repeatition and code duplication. With generic abstract syntax it becomes possible to reuse already implemented and tested algorithms, as well as to easily extend existing code. 
+Intrinsically scoped, or scope-safe, abstract syntax representation of the language terms helps to minimize a chance of introducing bugs, by leveraging the power of the host language type system. For example, in 1999 Bird and Paterson \cite{BirdPaterson1999_BruijnNested} showed how invariants of the de Bruijn notation can be described on the type level by using nested datatypes \cite{Bird1998_NestedDatatypes} with Church numerals~(Figure~\ref{fig:lambda-bruijn-nested}).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+  \centering
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+data Term v
+  = Var v
+  | App (Term v, Term v)
+  | Lam (Term (Incr v))
+data Incr v = Zero | Succ v
+\end{minted}
+  \caption{Lambda terms as nested datatypes}
+  \label{fig:lambda-bruijn-nested}
+\end{figure}
 
-\section{\todoorange{Free Foil}}
+Dex programming language~\cite{PaszkeDex_2021} is another illustrative example why using scope-safe abstract syntax is beneficial. When adopting the mentioned "rapier" technique in Dex, Google research team faced many difficulties, which led them to develop the foil~\cite{Foil} — an enhancement that leverages the Haskell's type system to maintain rapier's invariants.
 
-Free Foil introduced by Kudasov \textit{et al.} \cite{FreeFoil}, is a framework that generates efficient, scope-safe abstract syntax, enabling users to effortlessly add support of binders to a language.
+Scope-safety in foil relies on two features of GHC: rank-2 polymorphism and generalized algebraic data types (GADT). Scope-safe representation of lambda calculus terms with foil is shown on Figure~\ref{fig:lambda-foil}.
 
-...
+\begin{figure}[H]
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+data Term n where
+  Var :: Name n -> Term n
+  App :: Term n -> Term n -> Term n
+  Lam :: Binder n l -> Term l -> Term n
+\end{minted}
+  \caption{Lambda terms with foil}
+  \label{fig:lambda-foil}
+\end{figure}
 
-<TODO: demonstrate main data types and ideas of free foil>
+With foil, each term is assigned with a phantom type parameter \texttt{n}, which tracks the scope. For example, \texttt{Binder n l} in the \texttt{Lam} constructor, represents a variable bound to lambda, and which extends scope \texttt{n} to scope \texttt{l}. This way, mixing terms in different scopes will be prevented by Haskell's type system.
 
-...
+\subsection{Free Foil}
 
-Scope-safe generic abstract syntax can be generated with Free Foil in two ways: by using free scoped monads or via Template Haskell \cite{SheardPeytonJones2002_TH} GHC extension (i.e. metaprogramming). In this work we have chosen the second approach, as it requires writing less code and, more importantly, integrates nicely with BNFC.
+Free Foil introduced by Kudasov \textit{et~al.} \cite{FreeFoil}, is a framework that generates efficient, generic, and scope-safe abstract syntax, enabling users to add support of binders to a language with minimal effort. Free Foil achieves this by combining foil (efficiency and intrinsic scoping) with data types à la carte technique~\cite{Swierstra2008_a_la_carte} (generality).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+  \centering
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+type Term n = AST TermSig Pattern n
 
-\section{\todogreen{Code Generation Tools}}
+data TermSig n where
+  Var :: Name n -> Term n
+  App :: Term n -> Term n -> Term n
+  Lam :: Pattern n l -> Term l -> Term n
 
-Backus–Naur Form Converter (BNFC) \cite{BNFC} is a tool for generating compiler front-end for an object language, given its' grammar in Labelled BNF \cite{BackusNaurForm2003}. By assigning a label to each rule in the grammar, we tell the BNFC what constructors to use when generating the syntax tree in the host language.
+data Pattern n l where
+  PatternVar :: NameBinder n l -> Pattern n l
+
+-- Types imported from FreeFoil
+data AST binder sig n where
+  Var :: Name n -> AST binder sig n
+  Node
+    :: sig (ScopedAST binder sig n) (AST binder sig n)
+    -> AST binder sig n
+
+data ScopedAST binder sig n where
+  ScopedAST
+    :: binder n l
+    -> AST binder sig l
+    -> ScopedAST binder sig n
+\end{minted}
+  \caption{Lambda terms with free foil}
+  \label{fig:lambda-free-foil}
+\end{figure}
+
+Figure~\ref{fig:lambda-free-foil} demonstrates how the lambda terms can be defined using free foil. First, we need to define the \emph{signature} of the language — the GADT \texttt{TermSig}. This GADT enumerates all syntactic forms of an object language and is parameterized by the current scope \texttt{n} (as with the foil). Each constructor corresponds to one node of the abstract syntax tree.
+
+Next, we specify how binders appear in each syntactic form via an auxiliary GADT \texttt{Pattern}. In the simply typed lambda-calculus the only binder is the parameter of a lambda-abstraction, therefore \texttt{Pattern} has a single constructor \texttt{PatternVar} that wraps a \texttt{NameBinder} supplied by Free Foil.
+
+With these two language-specific types, the actual scope-indexed term type (\texttt{Term n}) is obtained by instantiating the generic \texttt{AST} type provided by Free Foil.
+
+Scope-safe generic abstract syntax can be generated with Free Foil in two ways: by using free scoped monads or via Template Haskell \cite{SheardPeytonJones2002_TH} GHC extension (i.e., metaprogramming). In this work we have chosen the second approach, as it integrates nicely with BNFC, speeding up the prototyping.
+
+\section{Code Generation Tools}
+
+Backus–Naur Form Converter (BNFC) \cite{BNFC} is a tool for generating compiler front-end for an object language, given its grammar in Labelled BNF \cite{BackusNaurForm2003}. By assigning a label to each rule in the grammar, we tell the BNFC what constructors to use when generating the syntax tree in the host language.
 
 Figure~\ref{fig:lbnf-bnfc-example} below illustrates how BNF rules and their labels defined in the grammar file correspond to the Haskell code generated by BNFC. Different rules with the same label correspond to the different constructors of the same type. In the generated code, terminals from the grammar (such as \texttt{"true"} in the \texttt{ETrue} rule) are omitted, while non-terminals (such as \texttt{Exp1} and \texttt{Exp2} in the \texttt{EAdd} rule) become parameters of the corresponding type constructor. Lastly, integer postfix in the name of each rule only serves as the precedence level of this rule, and is ommitted in the resulting type name. Thus, both \texttt{Exp1} and \texttt{Exp2} are merged to \texttt{Exp} in code.
 
 \begin{figure}[H]
-  \centering
-  \begin{minipage}{0.49\textwidth}
+  \centering%
+  \begin{minipage}{0.58\textwidth-3pt}
     \begin{minted}[frame=single,fontsize=\small]{text}
 EVar.    Exp2 ::= Ident ;
 ETrue.   Exp2 ::= "true" ;
 EFalse.  Exp2 ::= "false" ;
 ENat.    Exp2 ::= Integer ;
 EAdd.    Exp1 ::= Exp1 "+" Exp2 ;
+ 
     \end{minted}
-    \hfill
-  \end{minipage}
-  \begin{minipage}{0.49\textwidth}
-    \begin{minted}[frame=single,fontsize=\small]{haskell}
+  \end{minipage}%
+  \hspace{6pt}%
+  \begin{minipage}{0.4\textwidth-3pt}
+\begin{minted}[frame=single,fontsize=\small]{haskell}
 data Exp
   = EVar Ident
   | ETrue 
   | EFalse
   | ENat Integer
   | EAdd Exp Exp
-    \end{minted}
+\end{minted}
   \end{minipage}
-  \caption[Input grammar and code produced by BNFC]{Example of the LBNF grammar and corresponding data type in Haskell, generated by BNFC.}
+  \caption[BNFC input and output example]{Example of the LBNF grammar and corresponding data type in Haskell, generated by BNFC.}
   \label{fig:lbnf-bnfc-example}
 \end{figure}
 
-BNFC significantly simplifies the process of prototyping a compiler, or a type checker for an object language. By supplying only the language grammar to BNFC, user gets a handful of functionality generated automatically, such as abstract syntax with pretty-printing, and, more importantly, specifications for lexer and parser generators. In fact, to further generate code of the lexer and parser, additional language-specific tools are required. And since the focus of this work is to implement a type checker in \textit{Haskell}, we use BNFC together with Alex \cite{haskell_alex}, a lexer generator, and Happy \cite{haskell_happy}, a parser generator.
+BNFC significantly simplifies the process of prototyping a compiler, or a type checker for an object language. By supplying only the language grammar to BNFC, user gets a handful of functionality generated automatically, such as abstract syntax with pretty-printing, and, more importantly, specifications for lexer and parser generators.

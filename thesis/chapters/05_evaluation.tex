@@ -1,41 +1,61 @@
-\chapter{\todored{Evaluation and Discussion}}
+\chapter{Evaluation and Discussion}
 \label{chap:evaluation}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% подробно расписываю анализ своей реализации, что получилось хорошо, что нет, на какие компромиссы пришлось пойти + вывод “как можно использовать то, что я сделал в этой работе“
-% тут же Future Work:
-%  - Обобщение всего этого подхода. Сейчас “заложен фундамент”, в дальнейшем можно сделать обобщённый Hindley-Milner с уровнями.
-%  - Использование эффективных структур данных и алгоритма унификации через существующие библиотеки.
-%  - Моя работа это Proof-of-Concept: есть Free Foil, в него можно добавить уровни
+This chapter analyzes the prototype type-checker presented in Chapter~\ref{chap:implementation}. We evaluate the design choices, discuss the strengths and limitations of the implementation, and reflect on the practical experience of using BNFC and Free~Foil for prototyping. Finally, we propose steps for the future work.
 
-% Тут должен быть ответ на вопрос: “что всё это значит?”, выводы из моей работы.
-% Возможные выводы:
-%   Haskell хорош/плох для таких-то задач
-%   free-foil хорош/плох для реализации тайпчекера (безопасность, скорость и т.п.) или наоборот какие-то трудности
-%   сравнение производительности
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
 
-\section{\todored{Conclusions}}
+Using \emph{BNFC} to generate the front-end and \emph{Free~Foil} to generate scope-safe second-order abstract syntax, accelerated the type-checker prototype development. Together with GHC advanced features (e.g., rank-N polymorphism, GADTs, and Template~Haskell), scope-safety and generality of the abstract syntax generated with Free~Foil eliminated an entire class of bugs and allowed generic functions, such as substitution, to be written independently from the concrete language terms. The main drawback of Free~Foil observed is the learning curve — kind-level encodings of scopes and compiler error messages can be confusing.
 
-\begin{enumerate}
-  \item Using free foil and BNFC makes its' easy to add new terms: we only need to extend grammar, and: (1) parser and abstract syntax will be automatically generated with BNFC and Free Foil (2) places that are non-generic will be highlighted by Haskell's type system (3) generic algorithms will not even require any modifications, since they are generic
-\end{enumerate}
+All tests focused on algorithm correctness passed, giving empirical evidence of soundness. During testing we have also uncovered a problem related to comparison of polymorphic types, which could be further investigated to improve the Free~Foil framework.
 
-\section{\todored{Future Work}}
+We highlight the main advantages of the chosen approach:
+
+\begin{description}
+  \item[\textbf{Safety}] By outsourcing handling of bound names to Free~Foil, capture-avoiding substitution and operations with scoped AST are implemented in safe manner, and encoding of rapier's invariants on the type level, prevents the introduction of bugs.
+  \item[\textbf{Modularity}] The type-checker is parameterized over the abstract syntax functor; adding records or algebraic data types would mainly require new pattern synonyms and no changes to the inference core.
+  \item[\textbf{Clarity}] Haskell implementation follows directly the mathematical definition of the proposed algorithm $\mathcal{L}$ (Figure~\ref{fig:algorithm-L}).
+\end{description}
+
+\section{Limitations}
+
+We also identify the following limitations of this work:
 
 \begin{itemize}
-  \item it's a toy language, possible problems may arise when implementing features for the real language (error messages, code editing suggestions)
-  \item unification is crucial; algorithm presented here is simple and not proved theoretically, we could also outsource it too to other libraries
+  \item Unification variables are represented by \texttt{String}s and their levels stored in a \texttt{HashMap}. A more efficient design would be to integrate a level directly into the free-foil's binder data type, eliminating operations on map entirely.
+  \item The Robinson-style unification algorithm is implemented "by hand", re-traversing terms for occurs checks and level map updating. Outsourcing to a well-tested generic unification library would both speed up the type-checker, and give us more confidence that the implementation is correct.
+  \item As a proof-of-concept, the focus of this work is made on correctness and clarity; no benchmarks were performed. To better evaluate performance and scalability, more sophisticated test cases, either based on real-world projects or generated with scripts, should be added and benchmarked.
 \end{itemize}
 
-...
+\section{Future Work}
+
+Besides possible improvements of the proposed implementation listed in the previous section, we propose a possible way to generalize our approach to build a generic Hindley-Milner-style type checking library on top of Free~Foil.
+
+A library would provide:
 
 \begin{itemize}
-  \item \textbf{Conclusion:} The generality and scope-safety nature of the abstract syntax generated by Free Foil has shown to be very helpful during the implementation. Generality — it's easy to extend, we can reuse implemented algorithms. Scope-safety — name management is outsorced with efficient algorithm and Haskell's type systems prevents us from making mistakes.
-  \item \textbf{Limitation:} Error messages, Language-Server-Protocol...
-  \item \textbf{Limitation:} Performance: unification is based on simple algorithm (Robinson's? exponential worst-case?). 
-  \item \textbf{Future work:} More efficient unification algorithms exist (mention some works). Moreover, it's possible to outsource unification on some general unification algorithm (find some works to mention).
-  \item \textbf{Future work:} HM algorithm can be generalized (mention HM(x) and hypertypes?) altogether with levels for more efficient generalization?
-  \item \textbf{Future work:} Benchmarks for generalization w/and w/o levels?
-  \item \textbf{Future work:} Levels are stored in map, instead we can use a separate data structure for unification variables.
+  \item Type-class that a user should implement for their AST signature. Figure~\ref{fig:HMTypingSig} below shows a possible declaration of a such type-class — \texttt{HMTypingSig}.
+  \item Type inference function that would take an AST node with the defined instance of \texttt{HMTypingSig}, and actually run type inference algorithm supplying the necessary initial context, and performing post-processing.
+  \item Set of functions available to a user in the context of type inference. Utility-functions used in the \texttt{TypeInferencer} context (for example, \texttt{enterScope}, \texttt{addConstraints}) could be provided to a user as the "building blocks" for their type inference rules.
 \end{itemize}
+
+\begin{figure}[H]
+\begin{minted}[frame=single,fontsize=\small]{haskell}
+class HMTypingSig
+  (binder :: Foil.S -> Foil.S -> *)
+  (typeSig :: * -> * -> *)
+  (sig :: * -> * -> *) 
+  where
+  inferType
+    :: sig (ScopedInfer binder typeSig n) (Infer binder typeSig)
+    -> TypeInferencer (UType binder typeSig) n (Infer binder typeSig)
+
+instance HMTypingSig FoilTypePattern TypeSig ExpSig where
+  inferType = \case
+    ETrueSig -> do ...
+\end{minted}
+  \caption{Proposed algorithm generalization via \texttt{HMTypingSig} type-class.}
+  \label{fig:HMTypingSig}
+\end{figure}
+
+In the current implementation, one major problem we see is the non-obvious call to \texttt{unify} when inferring the type of a let-binding. To solve this, we suggest to modify the proposed implementation adopting the algorithm introduced by Heeren \emph{et~al.}\cite{Heeren2002_GeneralizingHM}. Then, calls to \texttt{generalize}, \texttt{specialize}, and \texttt{unify} would be replaced by addition of two new constraint kinds, namely \emph{explicit instance constraint} ($\tau \preceq \sigma$) and \emph{implicit instance constraint} ($\tau_1 \leq_M \tau_2$), in addition to the only supported \emph{equality constraint} ($\tau_1 \equiv \tau_2$). As a result, a user would only need to think about \emph{what kind of constraint to add}, instead of \emph{when to call these methods}, when implementing the signature.

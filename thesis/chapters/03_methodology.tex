@@ -1,50 +1,126 @@
-\chapter{\todored{Design and Methodology}}
+\chapter{Design and Methodology}
 \label{chap:methodology}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In this chapter, we put the technical foundation of the implementation that will be discussed in the following chapter. First, we define the concrete syntax of the object language and give its grammar for terms and types. Then, we introduce the level-aware variant of the Hindley–Milner-style type inference algorithm.
 
-% ИДЕЯ — вернхеуровнево описываю чего я хочу добиться
+\section{Language Grammar}
 
-% описываю архитектуру своего решения; как вы собираетесь реализовать эффективный Hindley-Milner с уровнями через Free Foil. Тут важно сказать основные моменты, которые относятся к уровням и как они соотносятся с Free Foil
-
-% Здесь нужно опираться на типы в моей реализации (Constraint, TypingContext, etc.)
-% Описать критичные решения в моей реализации: почему Haskell почему BNFC почему free-foil
-
-% Proof of concept через SOAS.
-% декларативное описание алгоритма уже в работе, но с уровнями (куда и что мы вставили, чтобы)
-% 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The object language, for which type inference is to be implemented, is similar to the lambda calculus but with let expressions, natural number and boolean literals. Grammar of the language is shown on the Figure~\ref{fig:object-language-grammar}. It consists of two sets of rules: one for expressions, another for types. Input programs, however, do not have type annotations, and can only contain expressions. We use types grammar to describe and reason about the type system in the text and during type inference.
 
 \begin{figure}[H]
-  \begin{mathpar}
-    \inferrule
-      {e \text{ is a natural number}}
-      {e : \texttt{Nat}}
-      \,[\texttt{ENat}]
+  \fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule}%
+    \begin{center}
+      \begin{grammar}
+        \firstcase{\text{$e$}}{0 | 1 | \ldots}{constant natural number}
+        \otherform{\texttt{true}}{constant true}
+        \otherform{\texttt{false}}{constant false}
+        \otherform{x}{variable}
+        \otherform{\lambda x . e}{abstraction}
+        \otherform{e\;e}{application}
+        \otherform{\texttt{let } x \texttt{ = } e \texttt{ in } e} {let-binding}
 
-    \texttt{true} : \texttt{Bool}\,[\texttt{ETrue}]
-
-    \texttt{false} : \texttt{Bool}\,[\texttt{EFalse}]
-
-    \inferrule
-      {x : \sigma \in \Gamma \quad
-      \tau = \texttt{inst}(\sigma)}
-      {\Gamma \vdash x : \tau}
-      \,[\texttt{Var}]
-  \end{mathpar}
-  \caption{Algorithm $\mathcal{L}$ typing rules.}
+        \firstcase{\text{$\tau$}}{\texttt{Nat}}{natural number type}
+        \otherform{\texttt{Bool}}{boolean type}
+        \otherform{\alpha}{type variable}
+        \otherform{\tau \to \tau}{function (arrow)}
+        \otherform{\forall \alpha. \tau}{forall}
+      \end{grammar}
+    \end{center}
+  \end{minipage}}
+  \caption{Object language grammar}
+  \label{fig:object-language-grammar}
 \end{figure}
+
+\section{Inference Algorithm}
+
+In this section, we define the type inference algorithm, which we call $\mathcal{L}$ (for levels). $\mathcal{L}$ takes an expression with typing context as an input, and produces the inferred typed along with the updated context.
+
+\subsection{Typing Context}
+
+We write $\mathcal{T} = (C, \mathcal{S}, \Gamma, M, \ell)$ for a \emph{typing context}. It is \emph{not} limited to the typing environment \(\Gamma\), but contains the complete state required by $\mathcal{L}$:
+\begin{itemize}
+  \item $C$ — the current set of collected \emph{constraints} to be resolved.
+  \item $\mathcal{S}$ — the accumulated \emph{substitution}, which is a mapping of type variables to type terms.  Whenever we write $\mathcal{S}\Gamma$ or $\mathcal{S}\tau$ we mean pointwise application of $\mathcal{S}$ to every type occurring in $\Gamma$ or to the type $\tau$.
+  \item $\Gamma$ — the conventional \emph{typing environment} that maps term variables to their (possibly polymorphic) types.
+  \item $M$ — the \emph{level map} that assigns to each type variable the let-nesting level at which it has been introduced.
+  \item $\ell$ — the \emph{current level} i.e., let-nesting level. Entering the body of a \texttt{let} increases $\ell$; in all other rules the level is propagated unchanged.
+\end{itemize}
+
+\subsection{Auxiliary Functions}
+
+$\mathcal{L}$ relies on three auxiliary functions whose type signatures are on Figure~\ref{fig:algorithm-L-types}:
+
+\begin{description}
+  \item[$\mathrm{spec}$] takes a polytype $\sigma$ and returns its \emph{specialization} $(\tau,\vec{\alpha})$ where $\tau$ is a monotype with each bound variable in $\sigma$ substituted with a fresh variable, and $\vec{\alpha}$ is the list of all fresh variables introduced.
+  \item[$\mathrm{gen}$] performs \emph{generalization}.  Given a type $\tau$, a level map $M$ and the level $\ell$, it returns a polytype $\sigma$ that quantifies every free variable in $\tau$ whose level in $M$ is strictly greater than $\ell$.
+  \item[$\mathrm{unify}$] consumes the current constraint set $C$, substitution $\mathcal{S}$, and level map $M$, resolves all constraints, and produces the extended substitution with a possibly updated level map. The resulting substitution is a composition of $\mathcal{S}$ and all new substitutions obtained during constraint resolution.
+\end{description}
 
 \begin{figure}[H]
-  \begin{mathpar}
-    \overline{\Gamma}_l(\tau) = \forall \{\,\alpha | \alpha \in \texttt{free}(\tau) \text{ and } L(\alpha) > l\,\} .\tau
-  \end{mathpar}
-  \caption{Generalization via levels.}
+  \centering
+  \fbox{%
+    \begin{minipage}{0.7\textwidth}
+      \vspace{-1cm}
+      \begin{align*}
+        \mathcal{L}    &:: \mathcal{T} \times \textit{Expr} \to \mathcal{T} \times \textit{Type}\\
+        \mathrm{gen}   &:: \textit{Type} \times M \times \mathbb{N} \to \textit{Type}\\
+        \mathrm{spec}  &:: \textit{Type} \to \textit{Type} \times A\star\\
+        \mathrm{unify} &:: C \times \mathcal{S} \times M \to \mathcal{S} \times M
+      \end{align*}
+    \end{minipage}
+  }
+  \caption{Type signatures of $\mathcal{L}$ and auxiliary functions}
+  \label{fig:algorithm-L-types}
 \end{figure}
+
+\subsection{Algorithm Definition}
+
+$\mathcal{L}$ recursively analyzes the input expression in the given typing context, and returns the updated context with the inferred type. The algorithm is defined in Figure~\ref{fig:algorithm-L}, it handles 3 cases for literals and 4 non-trivial cases:
 
 \begin{itemize}
-  \item Unification algorithm: What to reference? What do we use?
-  \item Unification algorithm: Since levels of unification variables can be updated after unification, we need to add this logic into the algorithm.
-  \item 
+  \item \emph{Literals} (a number, \texttt{true}, and \texttt{false}) are assigned their primitive types and leave the context untouched.
+  \item For a \emph{variable}, we first take its polymorphic type from $\Gamma$, specialize it, and record the newly introduced variables in $M$.
+  \item In an \emph{abstraction} $\lambda x.\,e$ we create a fresh type variable $\beta$ for the argument, record its level, and recursively analyze the body with the extended typing environment.
+  \item \emph{Application} proceeds left-to-right: we infer a type $\tau_1$ for the function part, a type $\tau_2$ for the argument, introduce a fresh result variable $\beta$, and extend the constraint set with a new constraint $\tau_1\equiv \tau_2\to\beta$. The inferred type is $\beta$.
+  \item The \emph{let-binding} rule introduces the only place at which unification is performed. Expression $e_1$ is analyzed one level deeper (\(\ell\!+\!1\)). The call to $\mathrm{unify}$ yields a most general substitution $S_3$ that is applied to $\Gamma_2$ and $\tau_1$ before generalization. Finally we continue with $e_2$ under an \emph{empty} constraint set, since all constraints have been resolved by $\mathrm{unify}$.
 \end{itemize}
+
+Whenever the algorithm creates a fresh type variable $\beta$ (for instance in lambda abstraction or application), its level (i.e., the current level $\ell$) is recorded to $M$. The level map may later be \emph{updated} by $\mathrm{unify}$ when it turns out that two variables originating at different levels have to be identified. Substitution composition never appears explicitly in $\mathcal{L}$ because $\mathrm{unify}$ always returns the composed result.
+
+A key property of the presented algorithm is that it separates \emph{constraint generation} from \emph{constraint solving} while still being in a purely functional implementation.  All state changes are encapsulated in the context~$\mathcal{T}$, making the description suitable for a direct encoding in Haskell as shown in the following chapter.
+
+When the recursion eventually exits the root of the syntax tree, the typing context may still contain a non-empty constraint set. Therefore, to obtain the most general type of an expression, it is necessary to call \texttt{unify} one more time to solve all remaining constraints, apply the resulting substitution to the type returned by $\mathcal{L}$, and, finally, generalize it.
+
+\begin{figure}[H]
+  \fbox{\begin{minipage}[c][\textheight-2\fboxsep-2\fboxrule-1cm][c]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}%
+    \begin{alignat*}{4}
+      % Literals
+      & \mathcal{L} (\mathcal{T}_1, n) &&= & &(\mathcal{T}_1, \texttt{Nat}), \text{where } n \in \mathbb{N}\\
+      & \mathcal{L} (\mathcal{T}_1, \texttt{true}) &&= & &(\mathcal{T}_1, \texttt{Bool}) \\
+      & \mathcal{L} (\mathcal{T}_1, \texttt{false}) &&= & &(\mathcal{T}_1, \texttt{Bool}) \\
+      % Variable
+      & \mathcal{L} ((C_1, \mathcal{S}_1, \Gamma_1, M_1, \ell_1), x) &&= &\textbf{ let } &(\tau_1, \vec{\alpha}) = \mathrm{spec}(\tau_0), \text{where } (x : \tau_0) \in \Gamma_1 \\
+      & && & &M_2 = M_1 \union \{ \alpha \mapsto \ell_1 | \alpha \in \vec{\alpha} \}\\
+      & && &\textbf{in } &((C_1, \mathcal{S}_1, \Gamma_1, M_2, \ell_1), \tau_1)\\
+      % Abstraction
+      & \mathcal{L} ((C_1, \mathcal{S}_1, \Gamma_1, M_1, \ell_1), \lambda x. e) &&= &\textbf{ let } &\Gamma_2 = \Gamma_1 \union \{(x : \beta)\}, \beta \text{ is fresh} \\
+      & && & & M_2 = M_1 \union \{\beta \mapsto \ell_1\} \\
+      & && & & (\mathcal{T}_3, \tau_0) = \mathcal{L}((C_1, \mathcal{S}_1, \Gamma_2, M_2, \ell_1), e) \\
+      & && &\textbf{in } &(\mathcal{T}_3, \beta \to \tau_0) \\
+      % Application
+      & \mathcal{L} (\mathcal{T}_1, e_1\;e_2) &&= &\textbf{ let } &(\mathcal{T}_2, \tau_1) = \mathcal{L}(\mathcal{T}_1, e_1) \\
+      & && & &((C_3, \mathcal{S}_3, \Gamma_3, M_3, \ell_3), \tau_2) = \mathcal{L}(\mathcal{T}_2, e_2)\\
+      & && & & C_4 = C_3 \union \{\tau_1 \equiv \tau_2 \to \beta\}, \beta \text{ is fresh} \\
+      & && & & M_4 = M_3 \union \{\beta \mapsto \ell_3\} \\
+      & && &\textbf{in } &((C_4, \mathcal{S}_3, \Gamma_3, M_4, \ell_3), \beta) \\
+      % Let
+      & \mathcal{L} (\mathcal{T}_1, \texttt{let } x \texttt{ = } e_1 \texttt{ in } e_2) &&= &\textbf{ let } & (C_1, \mathcal{S}_1, \Gamma_1, M_1, \ell_1) = \mathcal{T}_1 \\
+      & && & &(\mathcal{T}_2, \tau_1) = \mathcal{L}((C_1, \mathcal{S}_1, \Gamma_1, M_1, \ell_1 + 1), e_1)\\
+      & && & &(C_2, \mathcal{S}_2, \Gamma_2, M_2, \ell_2) = \mathcal{T}_2\\
+      & && & &(\mathcal{S}_3, M_3) = \mathrm{unify}(C_2, \mathcal{S}_2, M_2)\\
+      & && & &\Gamma_3 = \mathcal{S}_3\Gamma_2 \union \{(x:\mathrm{gen}(\mathcal{S}_3 \tau_1, M_3, \ell_1))\}\\
+      & && &\textbf{in } &\mathcal{L}((\varnothing, \mathcal{S}_3, \Gamma_3, M_3, \ell_1), e_2) \\
+    \end{alignat*}
+  \end{minipage}}
+  \caption{Algorithm $\mathcal{L}$}\label{fig:algorithm-L}
+\end{figure}
