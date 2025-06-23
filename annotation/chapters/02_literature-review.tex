@@ -1,0 +1,41 @@
+\chapter{Обзор литературы}
+\label{chap:background}
+
+В литературе предложен ряд вариантов системы HM и реализаций алгоритмов. Классический алгоритм $\mathcal{W}$ основывается на правилах вывода типов, представленных в работе Милнера \cite{Milner1978_TypePolymorphism}. Основные правила (\texttt{Var}, \texttt{App}, \texttt{Abs}, \texttt{Let}) формализованы на рисунке~\ref{fig:syntactical-hm-rules}. Дамас доказал полноту и корректность алгоритма $\mathcal{W}$, что сделало его стандартом для ML-подобных языков \cite{Damas1984_TypeAssignment}.
+
+\begin{figure}[H]
+  \fbox{\begin{minipage}[c][\height+1.5cm][t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}%
+    \begin{mathpar}
+      \inferrule
+        {x : \sigma \in \Gamma \\
+          \sigma \sqsubseteq \tau}
+        {\Gamma \vdash x : \tau}
+        \,[\texttt{Var}]
+
+      \inferrule
+        {\Gamma \vdash e_0 : \tau \to \tau' \\
+          \Gamma \vdash e_1 : \tau}
+        {\Gamma \vdash e_0\;e_1 : \tau'}
+        \,[\texttt{App}]
+
+      \inferrule
+        {\Gamma, x : \tau \vdash e : \tau'}
+        {\Gamma \vdash \lambda x. e : \tau \to \tau'}
+        \,[\texttt{Abs}]
+
+      \inferrule
+        {\Gamma \vdash e_0 : \tau \\
+        \Gamma, x : \overline{\Gamma}(\tau) \vdash e_1 : \tau'}
+        {\Gamma \vdash \texttt{let } x = e_0 \texttt{ in } e_1 : \tau'}
+        \,[\texttt{Let}]
+    \end{mathpar}
+  \end{minipage}}
+  \caption{Синтаксические правила системы Хиндли–Милнера}
+  \label{fig:syntactical-hm-rules}
+\end{figure}
+
+Реми отметил, что обход всей среды для обобщения становится неэффективным при больших системах типов или расширениях \cite{Remy1992_SortedEqTheoryTypes}. В OCaml~\cite{Kiselyov2022_OCamplTypeChecker} и GHC используется уровневое обобщение, где каждой переменной унификации присваивается уровень, соответствующий вложенности. Обобщение происходит только над переменными с уровнем, большим текущего, что обеспечивает оптимизацию без потери корректности.
+
+Проблемы захвата переменных традиционно часто через индексы де Брёйна~\cite{deBruijn1972} или подход rapier~\cite{Simon2002_SecretsGHC}. Однако они не всегда удобны при генерации кода и расширении синтаксиса. Free Foil~\cite{FreeFoil} предлагает безопасное для областей видимости представление, автоматическую генерацию шаблонов и интеграцию с data types à la carte~\cite{Swierstra2008_a_la_carte}.
+
+BNFC позволяет автоматически получать парсер и АСД первого порядка на основе LBNF-грамматики~\cite{BNFC}. Интеграция BNFC с Free Foil упрощает прототипирование, позволяя сосредоточиться на семантике и алгоритмах.

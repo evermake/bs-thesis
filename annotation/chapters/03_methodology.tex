@@ -1,0 +1,76 @@
+\chapter{Методология}
+\label{chap:met}
+
+Методология работы включает формализацию языка, определение алгоритма $\mathcal{L}$ и описание вспомогательных функций.
+
+Целевой язык — лямбда-исчисление с натуральными и булевыми литералами и let-выражениями. Грамматика выражений и типов представлена на рисунке~\ref{fig:object-language-grammar}.
+
+\begin{figure}[H]
+  \fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule}%
+    \begin{center}
+      \begin{grammar}
+        \firstcase{\text{$e$}}{0 | 1 | \ldots}{constant natural number}
+        \otherform{\texttt{true}}{constant true}
+        \otherform{\texttt{false}}{constant false}
+        \otherform{x}{variable}
+        \otherform{\lambda x . e}{abstraction}
+        \otherform{e\;e}{application}
+        \otherform{\texttt{let } x \texttt{ = } e \texttt{ in } e} {let-binding}
+
+        \firstcase{\text{$\tau$}}{\texttt{Nat}}{natural number type}
+        \otherform{\texttt{Bool}}{boolean type}
+        \otherform{\alpha}{type variable}
+        \otherform{\tau \to \tau}{function (arrow)}
+        \otherform{\forall \alpha. \tau}{forall}
+      \end{grammar}
+    \end{center}
+  \end{minipage}}
+  \caption{Грамматица целевого языка}
+  \label{fig:object-language-grammar}
+\end{figure}
+
+Алгоритм $\mathcal{L}$ основан на манипуляции контекста $\mathcal{T} = (C,\mathcal{S},\Gamma,M,\ell)$, где:
+\begin{itemize}
+  \item $C$ — набор ограничений;
+  \item $\mathcal{S}$ — текущая подстановка;
+  \item $\Gamma$ — среда типизации;
+  \item $M$ — отображение уровней переменных;
+  \item $\ell$ — текущий уровень вложенности.
+\end{itemize}
+
+Математическое описание предложенного алгоритма $\mathcal{L}$ представлено на рисунке~\ref{fig:algorithm-L}.
+
+
+\begin{figure}[H]
+  \fbox{\begin{minipage}[c][\textheight-2\fboxsep-2\fboxrule-1cm][c]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}%
+    \begin{alignat*}{4}
+      % Literals
+      & \mathcal{L} (\mathcal{T}_1, n) &&= & &(\mathcal{T}_1, \texttt{Nat}), \text{where } n \in \mathbb{N}\\
+      & \mathcal{L} (\mathcal{T}_1, \texttt{true}) &&= & &(\mathcal{T}_1, \texttt{Bool}) \\
+      & \mathcal{L} (\mathcal{T}_1, \texttt{false}) &&= & &(\mathcal{T}_1, \texttt{Bool}) \\
+      % Variable
+      & \mathcal{L} ((C_1, \mathcal{S}_1, \Gamma_1, M_1, \ell_1), x) &&= &\textbf{ let } &(\tau_1, \vec{\alpha}) = \mathrm{spec}(\tau_0), \text{where } (x : \tau_0) \in \Gamma_1 \\
+      & && & &M_2 = M_1 \union \{ \alpha \mapsto \ell_1 | \alpha \in \vec{\alpha} \}\\
+      & && &\textbf{in } &((C_1, \mathcal{S}_1, \Gamma_1, M_2, \ell_1), \tau_1)\\
+      % Abstraction
+      & \mathcal{L} ((C_1, \mathcal{S}_1, \Gamma_1, M_1, \ell_1), \lambda x. e) &&= &\textbf{ let } &\Gamma_2 = \Gamma_1 \union \{(x : \beta)\}, \beta \text{ is fresh} \\
+      & && & & M_2 = M_1 \union \{\beta \mapsto \ell_1\} \\
+      & && & & (\mathcal{T}_3, \tau_0) = \mathcal{L}((C_1, \mathcal{S}_1, \Gamma_2, M_2, \ell_1), e) \\
+      & && &\textbf{in } &(\mathcal{T}_3, \beta \to \tau_0) \\
+      % Application
+      & \mathcal{L} (\mathcal{T}_1, e_1\;e_2) &&= &\textbf{ let } &(\mathcal{T}_2, \tau_1) = \mathcal{L}(\mathcal{T}_1, e_1) \\
+      & && & &((C_3, \mathcal{S}_3, \Gamma_3, M_3, \ell_3), \tau_2) = \mathcal{L}(\mathcal{T}_2, e_2)\\
+      & && & & C_4 = C_3 \union \{\tau_1 \equiv \tau_2 \to \beta\}, \beta \text{ is fresh} \\
+      & && & & M_4 = M_3 \union \{\beta \mapsto \ell_3\} \\
+      & && &\textbf{in } &((C_4, \mathcal{S}_3, \Gamma_3, M_4, \ell_3), \beta) \\
+      % Let
+      & \mathcal{L} (\mathcal{T}_1, \texttt{let } x \texttt{ = } e_1 \texttt{ in } e_2) &&= &\textbf{ let } & (C_1, \mathcal{S}_1, \Gamma_1, M_1, \ell_1) = \mathcal{T}_1 \\
+      & && & &(\mathcal{T}_2, \tau_1) = \mathcal{L}((C_1, \mathcal{S}_1, \Gamma_1, M_1, \ell_1 + 1), e_1)\\
+      & && & &(C_2, \mathcal{S}_2, \Gamma_2, M_2, \ell_2) = \mathcal{T}_2\\
+      & && & &(\mathcal{S}_3, M_3) = \mathrm{unify}(C_2, \mathcal{S}_2, M_2)\\
+      & && & &\Gamma_3 = \mathcal{S}_3\Gamma_2 \union \{(x:\mathrm{gen}(\mathcal{S}_3 \tau_1, M_3, \ell_1))\}\\
+      & && &\textbf{in } &\mathcal{L}((\varnothing, \mathcal{S}_3, \Gamma_3, M_3, \ell_1), e_2) \\
+    \end{alignat*}
+  \end{minipage}}
+  \caption{Алгоритм $\mathcal{L}$}\label{fig:algorithm-L}
+\end{figure}

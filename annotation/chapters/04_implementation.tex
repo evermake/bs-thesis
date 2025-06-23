@@ -1,0 +1,38 @@
+\chapter{Реализация}
+\label{chap:impl}
+
+Прототип реализован на языке программирования Haskell с использованием инструментов BNFC, Alex, Happy и Template~Haskell\footnote{Template Haskell — расширение GHC, позволяющее выполнять метапрограммирование, то есть генерировать код во время компиляции.} для генерации АСД. На основе грамматики языка в нотации LBNF, с помощью BNFC генерируются необходимые модули с парсером языка и определением АСД первого порядка. С помощью Free~Foil генерируется обобщённый абстрактный синтаксис второго порядка для сигнатур выражения \texttt{ExpSig} и \texttt{TypeSig}.
+
+Реализована монада \texttt{TypeInferencer} для управления контекстом алгоритма типизации с необходимыми функциями для выполнения операций в контексте монады. Основываясь на упомянутых утилитах и монаде, функция \texttt{inferType} рекурсивно обрабатывает узлы АСД и вызывает необходимые операции, возвращая выведенный тип программы. Реализация функции вывода типа соответствующая алгоритму $\mathcal{L}$ представлена на рисунке~\ref{fig:inferType}.
+
+\begin{figure}[H]
+  \begin{minted}[frame=single,fontsize=\small]{haskell}
+inferType :: Exp n -> TypeInferencer n Type'
+inferType ETrue = return TBool
+inferType EFalse = return TBool
+inferType (ENat _) = return TNat
+inferType (FreeFoil.Var x) = do
+  TypingEnv env <- gets tcEnv
+  specialize_ (Foil.lookupName x env)  
+inferType (EAbs (FoilPatternVar x) eBody) = do
+  tParam <- freshUVar_
+  tBody <- enterScope x tParam $ inferType eBody
+  return (TArrow tParam tBody)
+inferType (EApp eAbs eArg) = do
+  tAbs <- inferType eAbs
+  tArg <- inferType eArg
+  tRes <- freshUVar_
+  addConstraints [(tAbs, TArrow tArg tRes)]
+  return tRes
+inferType (ELet eBound (FoilPatternVar x) eInner) = do
+  tBound <- enterLevel (inferType eBound)
+  unify
+  subst <- gets tcSubst
+  tBound' <- generalize (applySubst subst tBound)
+  enterScope x tBound' (inferType eInner)
+\end{minted}
+  \caption[Реализация \texttt{inferType}]{Реализация функции \texttt{inferType}.}
+  \label{fig:inferType}
+\end{figure}
+
+В работе также описан подход к тестированию и разработан набор тестов, состоящий из 33 корректных и 19 некорректных программ. Все тесты выполнены успешно, что эмпирически подтверждает корректность реализации.
