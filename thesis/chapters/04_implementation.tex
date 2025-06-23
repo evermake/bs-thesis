@@ -437,9 +437,9 @@ We also declare utility-functions that operate on the \texttt{TypeInferencer} mo
   \item \texttt{addConstraints} — simply adds new constraints to the typing context.
   \item \texttt{enterScope} — performs a monadic operation in a context where the \texttt{TypingEnv} is extended with a new binder and its associated type; it automatically adds and removes the binder, ensuring scope-safety.
   \item \texttt{enterLevel} — performs a monadic operation while temporarily incrementing the \texttt{tcLevel} field in the context, and then restores it to its previous value.
-  \item \texttt{generalize} — corresponds to the $\mathrm{gen}$ (Figure~\ref{fig:algorithm-L-types}). It generalizes a type, quantifying all type variables accounting for levels, implicitly taking information from the context.
-  \item \texttt{specialize\_} — corresponds to the $\mathrm{spec}$ (Figure~\ref{fig:algorithm-L-types}). It specializes a type, replacing all quantified type variables with fresh unification variables.
-  \item \texttt{unify} — implicitly resolves all constraints in the typing context, applies the resulting substitution to the typing environment, and updates the context.
+  \item \texttt{generalize} — corresponds to $\mathrm{gen}$~(Figure~\ref{fig:algorithm-L-types}). It generalizes a type, quantifying all type variables accounting for levels, implicitly taking information from the context.
+  \item \texttt{specialize\_} — corresponds to $\mathrm{spec}$~(Figure~\ref{fig:algorithm-L-types}). It specializes a type, replacing all quantified type variables with fresh unification variables.
+  \item \texttt{unify} — corresponds to $\mathrm{unify}$~(Figure~\ref{fig:algorithm-L-types}). It implicitly resolves all constraints in the typing context, applies the resulting substitution to the typing environment, and updates the context.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -550,7 +550,7 @@ True
 >>> FreeFoil.alphaEquiv Foil.emptyScope e1 e2
 True
   \end{minted}
-  \caption[\texttt{FreeFoil.alphaEquiv} usage examples (1)]{Examples demonstrating that \texttt{FreeFoil.alphaEquiv} does not distinguish between different variable names or literal values.}
+  \caption[\texttt{FreeFoil.alphaEquiv} usage examples (1)]{Examples demonstrating that \texttt{FreeFoil.alphaEquiv} does not distinguish between different unification variable names or literal values.}
   \label{fig:freefoil-alphaequiv-literals}
 \end{figure}
 

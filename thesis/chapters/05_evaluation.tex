@@ -13,7 +13,7 @@ We highlight the main advantages of the chosen approach:
 
 \begin{description}
   \item[\textbf{Safety}] By outsourcing handling of bound names to Free~Foil, capture-avoiding substitution and operations with scoped AST are implemented in safe manner, and encoding of rapier's invariants on the type level, prevents the introduction of bugs.
-  \item[\textbf{Modularity}] The type-checker is parameterized over the abstract syntax functor; adding records or algebraic data types would mainly require new pattern synonyms and no changes to the inference core.
+  \item[\textbf{Modularity}] The type-checker is parameterized over the abstract syntax signature; extending language with the new expression or type terms would not require changes to the inference core.
   \item[\textbf{Clarity}] Haskell implementation follows directly the mathematical definition of the proposed algorithm $\mathcal{L}$ (Figure~\ref{fig:algorithm-L}).
 \end{description}
 
@@ -54,7 +54,7 @@ instance HMTypingSig FoilTypePattern TypeSig ExpSig where
   inferType = \case
     ETrueSig -> do ...
 \end{minted}
-  \caption{Proposed algorithm generalization via \texttt{HMTypingSig} type-class.}
+  \caption[Proposed \texttt{HMTypingSig} type-class]{Proposed algorithm generalization via \texttt{HMTypingSig} type-class.}
   \label{fig:HMTypingSig}
 \end{figure}
 
