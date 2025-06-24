@@ -81,7 +81,7 @@
 \usepackage{multirow}
 \usepackage{longtable}
 \usepackage{ebproof}
-\usepackage[font=singlespacing, labelfont=bf]{caption}
+\usepackage[font=singlespacing, labelfont=bf, justification=raggedright, singlelinecheck=false]{caption}
 %Hints
 \newcommand\pic[1]{(Fig. \ref{#1})} %Ref on figure
 \newcommand\tab[1]{(Tab. \ref{#1})} %Ref on table
@@ -97,7 +97,7 @@
 % \captionsetup[table]{labelfont={normalfont}, name={TABLE}, labelsep={newline}}
 \setlength{\parindent}{2em} 
 \DeclareCaptionLabelSeparator{figSep}{.\quad}
-\captionsetup[figure]{labelfont={normalfont}, name={Fig.}, labelsep=period}
+\captionsetup[figure]{labelfont={normalfont},name={Fig.},labelsep=period,justification=raggedright,singlelinecheck=false}
 \counterwithin{figure}{chapter}
 
 % \usepackage{titlesec}

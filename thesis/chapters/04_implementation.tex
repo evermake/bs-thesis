@@ -73,7 +73,7 @@ coercions Type 2 ;
 
 TPatternVar. TypePattern ::= Ident ;
 ScopedType. ScopedType ::= Type1 ;
-  \end{minted}
+\end{minted}
   \caption[LBNF grammar of the object language types]{Labelled BNF grammar of the object language types. \texttt{UVarIdent} is a custom lexical type introduced to distinguish unification (free) variables from bound variables, which use the predifined basic type \texttt{Ident}. The \texttt{coercions} is a macro that automatically generates semantic "no-op" coercion rules that define the precedence of the operators.}
   \label{fig:lbnf-types}
 \end{figure}
