@@ -42,10 +42,15 @@ Recommendations / Hints:
 
 // Used to toggle code blocks width between auto/100%
 #let rawFull = state("raw-full", false)
+#let rawFz = state("raw-font-size", 32pt)
+
+#let setRawFz(size: 32pt) = {
+  rawFz.update(size)
+}
 
 #show raw: set text(font: ("Geist Mono", "DejaVu Sans Mono"))
 #show raw.where(block: true): it => context [
-  #set text(size: 32pt)
+  #set text(size: rawFz.get())
   #if rawFull.get() {
     block(
       width: 100%,
@@ -86,7 +91,7 @@ Recommendations / Hints:
 #page(
   footer: [
     #align(center)[
-      #text(size: 36pt)[Innopolis, 2025]
+      #text(size: 42pt)[Innopolis, 2025]
     ]
   ]
 )[
@@ -116,12 +121,13 @@ Recommendations / Hints:
   + How to make implementation extendable?
 ], footer: "Context & Related Works")
 ////////////////////////////////////////////////////////////////////////////////
+#setRawFz(size: 46pt)
 #slide([
   = Hindley-Milner Type System
 
-  - Inference of the most general (principal) types without annotations
+  - Inference of the most general (principal) type without annotations;
 
-  #align(center)[
+  #align(center+horizon)[
     ```
     let twice = λf.λx. f (f x) in
       let incr = λn. n + 1 in
@@ -133,55 +139,64 @@ Recommendations / Hints:
 #slide([
   = Hindley-Milner Type System
 
-  - Inference of the most general (principal) types without annotations
-  - Parametric polymorphism (`let`-polymorphism\*)
+  - Inference of the most general (principal) type without annotations;
+  - Support of parametric polymorphism;
 
-  ```
-  let id = λx.x
-    in ... (id 3) ... (id "text") ...
-  ```
+  #align(center+horizon)[
+    ```
+    let id = λx.x
+      in ... (id 3) ... (id "text") ...
+    ```
+  ]
 ], footer: "Context & Related Works")
 ////////////////////////////////////////////////////////////////////////////////
 #slide([
   = Hindley-Milner Type System
 
-  - Inference of the most general (principal) types without annotations
-  - Parametric polymorphism (`let`-polymorphism\*)
+  - Inference of the most general (principal) type without annotations;
+  - Support of parametric polymorphism;
+  - Soundness and completeness have been proved @Damas1984_TypeAssignment;
 
-  ```
-  let id = λx.x
-    in ... (id 3) ... (id "text") ...
-  ```
+  // #columns(2)[
+  //   #rect(inset: 16pt, width: 100%)[$
+  //     frac(
+  //       Gamma tack e_0 : tau #h(40pt) Gamma "," x : accent(Gamma, macron) (tau) tack e_1 : tau',
+  //       Gamma tack mono("let") x = e_0 mono("in") e_1 : tau'
+  //     )
+  //     #h(16pt)
+  //     ["Let"]
+  //   $]
 
-  #columns(2)[
-    #rect(inset: 16pt, width: 100%)[$
-      frac(
-        Gamma tack e_0 : tau #h(40pt) Gamma "," x : accent(Gamma, macron) (tau) tack e_1 : tau',
-        Gamma tack mono("let") x = e_0 mono("in") e_1 : tau'
-      )
-      #h(16pt)
-      ["Let"]
-    $]
+  //   #colbreak()
 
-    #colbreak()
+  //   #rect(inset: 16pt)[$
+  //     frac(
+  //       x : sigma in Gamma #h(40pt) tau = italic("inst")(sigma),
+  //       Gamma tack x : tau
+  //     )
+  //     #h(16pt)
+  //     ["Var"]
+  //   $]
+  // ]
 
-    #rect(inset: 16pt)[$
-      frac(
-        x : sigma in Gamma #h(40pt) tau = italic("inst")(sigma),
-        Gamma tack x : tau
-      )
-      #h(16pt)
-      ["Var"]
-    $]
-  ]
-
-  // quantifies all monotype variables not bound in Γ
-  $
-    accent(Gamma, macron) (tau) = forall accent(a, hat) . tau ", where"
-    accent(a, hat) = "free"(tau) - "free"(Gamma)\
-    "*Calculating" accent(a, hat) "can be slow"
-  $
+  // // quantifies all monotype variables not bound in Γ
+  // $
+  //   accent(Gamma, macron) (tau) = forall accent(a, hat) . tau ", where"
+  //   accent(a, hat) = "free"(tau) - "free"(Gamma)\
+  //   "*Calculating" accent(a, hat) "can be slow"
+  // $
 ], footer: "Context & Related Works")
+////////////////////////////////////////////////////////////////////////////////
+#slide([
+  = Hindley-Milner Type System
+
+  - Inference of the most general (principal) type without annotations;
+  - Support of parametric polymorphism;
+  - Soundness and completeness have been proved @Damas1984_TypeAssignment;
+  - Foundation of type systems in languages such as Haskell, ML, and OCaml;
+], footer: "Context & Related Works")
+////////////////////////////////////////////////////////////////////////////////
+#setRawFz()
 ////////////////////////////////////////////////////////////////////////////////
 #slide([
   = Rémy ranks @Remy1992_SortedEqTheoryTypes in OCaml
@@ -208,7 +223,7 @@ Recommendations / Hints:
   2. Foil (2022) — type-safe Rapier
   3. Free Foil (2024) — framework that generates scope-safe generic abstract syntax
     + Scope-safe: Foil
-    + Generic: data types â la carte @Swierstra2008_a_la_carte
+    + Generic: data types à la carte @Swierstra2008_a_la_carte
 
   Thanks Free Foil, program representation is:
 
@@ -218,14 +233,12 @@ Recommendations / Hints:
 ], footer: "Context & Related Works")
 ////////////////////////////////////////////////////////////////////////////////
 #slide([
-  = Goal
+  = Goals
 
-  Implement an _extendable_ and _efficient_ Hindley-Milner-like type inference algorithm.
-
-  Where:
-
-  - _Extendable_ — adding new functionality is easy.
-  - _Efficient_ — capture avoiding substitution and generalization is fast.
+  + Design a Hindley-Milner-style inference algorithm with generalization via levels;
+  + Implement the algorithm in Haskell with scope-safe generic abstract syntax;
+  + Develop a test-suite to verify correctness;
+  + Generalize implementation to make it reusable.
 ], footer: "Problem Statement")
 ////////////////////////////////////////////////////////////////////////////////
 #slide([
@@ -256,20 +269,19 @@ Recommendations / Hints:
 
   ```hs
   newtype TypeInferencer n a = TypeInferencer
-    {runTypeInferencer :: TypingContext n -> Either String (a, TypingContext n)}
+    {runTI :: TypingContext n -> Either String (a, TypingContext n)}
 
   data TypingContext n = TypingContext
-    { tcConstraints :: [(Type n, Type n)],
-      tcSubst       :: Map UVarIdent (Type Foil.VoidS),
-      tcEnv         :: Foil.NameMap n (Type Foil.VoidS),
-      tcFreshId     :: Int,
-      tcLevelMap    :: HashMap UVarIdent Int,
-      tcLevel       :: Int
+    {
+    , tcConstraints :: [(Type', Type')]
+    , tcSubst       :: Map UVarIdent (Type')
+    , tcEnv         :: Foil.NameMap n (Type')
+    , tcLevelMap    :: HashMap UVarIdent Int
+    , tcLevel       :: Int
+    , tcFreshId     :: Int
     }
 
   inferType :: Exp n -> TypeInferencer n Type'
-    inferType (ENat _) = ...
-    ...
   ```
 ], footer: "Proposed Solution")
 ////////////////////////////////////////////////////////////////////////////////
@@ -299,9 +311,7 @@ Recommendations / Hints:
       ```hs
       inferType (EAbs (FoilPatternVar x) e) = do
         t <- freshUVar
-        t' <-
-          enterScope x t $
-            inferType e
+        t' <- enterScope x t (inferType e)
         return (TArrow t t')
       ```,
 
@@ -338,10 +348,8 @@ Recommendations / Hints:
         decrLevel
         unify
         subst <- gets tcSubst
-        tGen <- generalize $
-          applySubst subst t
-        enterScope x tGen $
-          inferType e1
+        tGen <- generalize (applySubst subst t)
+        enterScope x tGen (inferType e1)
       ```,
       $
         frac(
@@ -366,12 +374,14 @@ Recommendations / Hints:
 #slide([
   = Results
 
-  + Implemented the Hindley-Milner-like type inference algorithm
-    - Defined grammar and generated parser using BNFC and Happy
-    - Generated generic abstract syntax with binders using Free Foil framework
-    - Applied the idea of Rémy's ranks (levels) to improve performance of the generalization algorithm
-  + Covered core functionality with tests
-  + Presented intermediate results at WITS 2025
+  + Introduced the Hindley-Milner-like algorithm $cal(L)$:
+    - Level-based generalization;
+    - Separated constraint generation and resolution.
+  + Implemented the algorithm in Haskell:
+    - Defined language grammar and generated parser with BNFC;
+    - Generated generic abstract syntax with binders using Free Foil;
+  + Covered core functionality with tests and implemented $forall$-equivalence.
+  + Presented intermediate results at WITS'25
     - Co-authored with Nikolai Kudasov, Diana Tomilovskaia, Anastasia Smirnova, Ekaterina Maximova
 ], footer: "Results & Future Work")
 ////////////////////////////////////////////////////////////////////////////////
@@ -383,6 +393,10 @@ Recommendations / Hints:
     - Usage of hashmap can be avoided
   - Benchmark implementation
 ], footer: "Results & Future Work")
+////////////////////////////////////////////////////////////////////////////////
+#slide([
+  #align(center+horizon)[#text(size: 96pt)[Q&A]]
+])
 ////////////////////////////////////////////////////////////////////////////////
 #slide(
   [#bibliography("../ref.bib", full: false, title: "References")],
